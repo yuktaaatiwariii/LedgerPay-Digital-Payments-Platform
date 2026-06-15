@@ -11,9 +11,6 @@ const router = express.Router();
  * - protected route
  */
 
-console.log(typeof authMiddleware);
-console.log(typeof accountController.createAccountController);
-
 router.post('/', authMiddleware, accountController.createAccountController);
 
 module.exports = router; 
