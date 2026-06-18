@@ -127,28 +127,47 @@ async function createTransaction(req, res) {
             { session }
         )
 
-
-        await session.commitTransaction()
+     await session.commitTransaction()
         session.endSession()
+
+
     } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
+      try {
+        await emailService.sendTransactionFailedEmail(
+            req.user.email,
+            req.user.name,
+            amount,
+            toAccount,
+        
+        );
+    } catch (emailError) {
+        console.error("Failed to send failure email:", emailError);
+    }
+
        return res.status(400).json({
             message: "Transaction failed",
             error: error.message
         })
-       
     }
 
         // 10. send email notification
-
-        await emailService.sendTransactionEmail(req.user.email, req.user.name, amount, toAccount)
+    try {
+    await emailService.sendTransactionEmail(req.user.email, req.user.name, amount, toAccount)
 
     return res.status(201).json({
         message: "Transaction completed successfully",
         transaction: transaction
     })
-       }  
+  }  catch (error) {
+    return res.status(500).json({
+        message: "Transaction completed but failed to send email",
+        error: error.message
+    })
+}}
 
-    
 async function createInitialFundsTransaction(req, res) {
     const { toAccount, amount, idempotencyKey } = req.body
 
@@ -218,7 +237,7 @@ async function createInitialFundsTransaction(req, res) {
     })
 
 
-}
+} 
 
 module.exports = {
     createTransaction,

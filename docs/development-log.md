@@ -2,8 +2,6 @@
 
  Phase 1 - Project Initialization
 
- Completed
-
  Basic Express server setup
  Folder structure organization
  MongoDB Atlas configuration
@@ -18,8 +16,6 @@ Learnings
 ---
 
  Phase 2 - Authentication System
-
- Completed
 
  User schema design
  Email validation
@@ -39,52 +35,98 @@ Learnings
 
 ---
 
-## Phase 3 - Email Service
+ Phase 3 - Email Service
 
-### Completed
+Nodemailer setup
+Email utility functions
+Registration and transaction email implementation
 
-* Nodemailer setup
-* Email utility functions
-* Registration email implementation
+ Learnings
 
-### Learnings
-
-* Email functionality should be separated into reusable services.
-* External services should be abstracted from controllers.
+Email functionality should be separated into reusable services.
+External services should be abstracted from controllers.
 
 ---
 
-## Phase 4 - Account Module
+Phase 4 - Account Module and Middleware 
 
-### Completed
+Account model
+Account routes
+Account controller
 
-* Account model
-* Account routes
-* Account controller
 
-### Learnings
+ Features
+
+* Created the Account model.
+* Implemented account routes and controllers.
+* Linked users with their financial accounts.
+* Added account management functionality.
+
+ Learnings
 
 * Financial systems require clear separation between user identity and financial accounts.
+* Learned how to structure modules using models, routes, and controllers.
+* Understood the importance of organizing account-related business logic.
+
 
 ---
 
-## Phase 5 - Ledger System
+ Phase 5 - Ledger System and Transaction implementation
 
-### Status
+ Features
 
-Currently under development.
+* Implemented a ledger-based transaction system.
+* Added debit and credit ledger entries for transfers.
+* Created transaction records with status tracking.
+* Ensured atomic operations using MongoDB transactions.
 
-### Goals
+ Learnings
 
-* Record all financial events.
-* Derive account balances from ledger entries.
-* Maintain auditability.
-* Prepare foundation for transaction processing.
-
+* Learned the principles of double-entry bookkeeping.
+* Understood how to maintain transaction consistency.
+* Gained experience with MongoDB sessions and transactions.
 
 
-initial bank transfer logic get one user make login make account and then logout ok
+
+---
+
+ Phase 6 - Balance calculation using ledger aggregation
+
+ Features
+
+* Balance calculation using ledger aggregation.
+* Real-time balance derived from debit and credit entries.
+* Improved consistency by using the ledger as the source of truth.
+
+Learnings
+
+* Learned MongoDB aggregation for balance calculation.
+* Understood ledger-based accounting concepts.
+* Gained experience with transaction-driven data models.
+
+---
+
+ Phase 7 - Token blacklist with TTL expiration
+
+ Features
+
+* Implemented JWT token blacklist.
+* Added TTL expiration for blacklisted tokens.
+* Secured logout by preventing token reuse.
+
+ Learnings
+
+* Learned JWT revocation strategies.
+* Understood MongoDB TTL indexes.
+* Improved knowledge of authentication security.
+
+
+
+
+note for self----
+
+<!-- initial bank transfer logic get one user make login make account and then logout ok
 then make login of system user for funds then make account the token saved in cookie is should of system
 then in toacount give user qaccount id idemkey and amount and then complete transactions
 after that login again from user account and get your balance 
-thats the logic
+thats the logic -->
