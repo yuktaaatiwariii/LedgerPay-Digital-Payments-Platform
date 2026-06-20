@@ -18,7 +18,8 @@ async function authMiddleware(req,res,next){
     try{
 
         const decoded = jwt.verify(token,process.env.JWT_SECRET)
-        const user = await userModel.findById(decoded.userId)
+        const user = await userModel.findById(decoded.userId) 
+        .select("+role");
         req.user = user;
         next();
 
@@ -45,10 +46,10 @@ async function authSystemMiddleware(req,res,next){
     try{
 
         const decoded = jwt.verify(token,process.env.JWT_SECRET)
-        const user = await userModel.findById(decoded.userId).select("+systemUser")
-        if(!user.systemUser){
+        const user = await userModel.findById(decoded.userId).select("+role")
+        if(!user || user.role !== "ADMIN"){
             return res.status(403).json({
-                message:"Forbidden access, user is not a system user"
+                message:"Forbidden access, Only admins can access this route "
             });
         }
 

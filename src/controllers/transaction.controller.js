@@ -89,10 +89,11 @@ async function createTransaction(req, res) {
 
         // 5. create transaction status "pending"
 
+        let session;
         let transaction;
         try{
 
-          const session = await mongoose.startSession()
+          session = await mongoose.startSession()
         session.startTransaction()
 
         transaction = (await transactionModel.create([ {
@@ -110,9 +111,7 @@ async function createTransaction(req, res) {
             type: "DEBIT"
         } ], { session })
 
-        await (() => {
-            return new Promise((resolve) => setTimeout(resolve, 15 * 1000));
-        })()
+    
 
         const creditLedgerEntry = await ledgerModel.create([ {
             account: toAccount,
@@ -128,12 +127,26 @@ async function createTransaction(req, res) {
         )
 
      await session.commitTransaction()
-        session.endSession()
+      await  session.endSession()
 
 
     } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
+
+     if (error.code === 11000) {
+    const existingTransaction = await transactionModel.findOne({
+        idempotencyKey,
+    });
+
+    return res.status(200).json({
+        message: "Duplicate request detected. Returning existing transaction.",
+        transaction: existingTransaction,
+    });
+     }
+
+       if (session) {
+       await session.abortTransaction();
+       session.endSession();
+      }
 
       try {
         await emailService.sendTransactionFailedEmail(
@@ -239,7 +252,89 @@ async function createInitialFundsTransaction(req, res) {
 
 } 
 
+async function getTransactionHistory(req, res) {
+   
+    try {
+        const { accountId } = req.params;
+
+        // 1. Verify that the account belongs to the logged-in user
+        const account = await accountModel.findOne({
+            _id: accountId,
+            user: req.user._id,
+        });
+
+        if (!account) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to view this account's transaction history.",
+            });
+        }
+
+        // 2. Fetch all transactions where this account is sender or receiver
+        const transactions = await transactionModel
+            .find({
+                $or: [
+                    { fromAccount: accountId },
+                    { toAccount: accountId },
+                ],
+            })
+            .sort({ createdAt: -1 }) // newest first
+
+        // 3. Add transaction direction (DEBIT or CREDIT)
+        const formattedTransactions = transactions.map((tx) => {
+            const isDebit =
+                tx.fromAccount &&
+                tx.fromAccount._id.toString() === accountId;
+
+            return {
+                amount: tx.amount,
+                createdAt: tx.createdAt,
+                updatedAt: tx.updatedAt,
+                fromAccount: tx.fromAccount,
+                toAccount: tx.toAccount,
+                direction: isDebit ? "DEBIT" : "CREDIT",
+            };
+        });
+
+        return res.status(200).json({
+            success: true,
+            totalTransactions: formattedTransactions.length,
+            transactions: formattedTransactions,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch transaction history.",
+            error: error.message,
+        });
+    }
+}
+
+async function getAllAccounts(req,res){
+
+   const accounts = await accountModel.find()
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+   res.status(200).json({
+        success: true,
+        totalAccounts: accounts.length,
+        accounts
+   })
+}
+    
+async function viewAllUsers(req,res){
+
+   const users = await accountModel.find()
+       .select("name email role createdAt");
+        res.status(200).json({
+        success: true,
+        totalUsers: users.length,
+        users
+   })
+}
+
 module.exports = {
-    createTransaction,
-    createInitialFundsTransaction
+    createTransaction, createInitialFundsTransaction,
+    getTransactionHistory ,getAllAccounts, viewAllUsers
 }
