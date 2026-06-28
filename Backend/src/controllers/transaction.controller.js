@@ -207,7 +207,7 @@ async function createInitialFundsTransaction(req, res) {
     })
 
     if (!fromUserAccount) {
-        return res.status(400).json({
+        return res.status(200).json({
             message: "System user account not found"
         })
     }

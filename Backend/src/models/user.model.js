@@ -15,18 +15,35 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:[,"Name is required"],
     },
+
     password:{
         type:String,
         required:[,"Password is required"], 
         minlength:[6,"Password must be at least 6 characters long"],
         select:false
     },
-     role: {
+
+    role: {
     type: String,
     enum: ["USER", "ADMIN"],
     default: "USER",
     select: false
+    },
+
+    customerId: {
+    type: String,
+    unique: true,
+    required: true
+    },
+
+lastLogin: {
+  type: Date,
+},
+
+previousLogin: {
+  type: Date,
 }
+
 },{
     timestamps:true
 });

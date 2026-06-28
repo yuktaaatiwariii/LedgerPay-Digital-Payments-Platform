@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios"; // adjust the path if needed
 import toast,{Toaster} from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 const LoginPage = () => {
 
@@ -13,7 +14,7 @@ const [password, setPassword] = useState("");
 
 
 const navigate = useNavigate();
-
+const queryClient = useQueryClient();
 
 
 const registerMutation = useMutation({
@@ -23,9 +24,10 @@ const registerMutation = useMutation({
   },
 
   onSuccess: (data) => {
-      toast.success("Account created successfully!");
-    console.log("Login successful:", data);
-        navigate("/dashboard");
+      toast.success("Login successfully!");
+    
+    queryClient.setQueryData(["authUser"], { user: data.user,});
+        navigate("/home/dashboard");
 
   },
 
@@ -121,8 +123,8 @@ const handleSignUp = (e) => {
           <button disabled={registerMutation.isPending}
             type='submit' className="mt-8 w-full rounded-full bg-gradient-to-r from-blue-500 to-blue-600 py-4 text-2xl font-semibold text-white shadow-lg transition hover:scale-[1.02]">
               {registerMutation.isPending
-           ? "Creating Account..."
-           : "Create Account"}
+           ? "Logging In..."
+           : "Logged In"}
           </button>
           </form>
 

@@ -10,6 +10,8 @@ async function authMiddleware(req,res,next){
         return res.status(401).json({message:"Unauthorized access, token missing"});
     }
 
+
+
     const isBlacklisted = await tokenBlacklistModel.findOne({token});
     if(isBlacklisted){
     return res.status(401).json({message:"Unauthorized access, token is blacklisted"});

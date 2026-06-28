@@ -28,6 +28,14 @@ router.get('/', authMiddleware.authMiddleware, accountController.getAllAccountsC
 router.get('/balance/:accountId', authMiddleware.authMiddleware, accountController.getAccountBalanceController);
 
 
+/**
+ *  -GET /api/accounts/getSummary
+ */
+
+router.get("/getSummary",authMiddleware.authMiddleware,accountController.getAccountSummaryController);
+
+
+
 
 module.exports = router; 
 

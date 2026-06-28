@@ -46,14 +46,6 @@ const LandingPage = () => {
             </h1>
           </div>
 
-          {/* <nav className="hidden gap-10 text-lg font-medium md:flex">
-            <a href="/">Home</a>
-            <a href="/">Features</a>
-            <a href="/">About</a>
-            <a href="/">Security</a>
-            <a href="/">Support</a>
-          </nav> */}
-
           <div className="flex gap-4">
             <Link to="/login"  className="rounded-full border border-slate-500 px-8 py-3 font-semibold"> 
               Login
@@ -136,8 +128,6 @@ const LandingPage = () => {
           <div className="flex gap-8 text-lg">
             <a href="/">Home</a>
             <a href="/">Features</a>
-            {/* <a href="/">About</a>
-            <a href="/">Security</a> */}
           </div>
 
           <div className="text-2xl font-bold text-blue-800">

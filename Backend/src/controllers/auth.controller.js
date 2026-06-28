@@ -8,7 +8,7 @@ const tokenBlacklistModel = require('../models/tokenBlackList.model');
 
 async function  userRegisterController(req,res){
 
-    const {name,email,password} = req.body;
+    const {name,email,password } = req.body;
 
     const isExists = await userModel.findOne({email:email});
     if(isExists){
@@ -18,10 +18,19 @@ async function  userRegisterController(req,res){
         })
     }
 
+const customerId =
+  "CUST" +
+  Date.now().toString().slice(-6) +
+  Math.random()
+    .toString(36)
+    .substring(2, 6)
+    .toUpperCase();
+
     const user= await userModel.create({
         name:name,
         email:email,
-        password:password
+        password:password,
+         customerId: customerId
     })
 
     const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'3d'});
@@ -29,7 +38,8 @@ async function  userRegisterController(req,res){
         user:{
             _id:user._id,
             email:user.email,
-            name:user.name
+            name:user.name,
+            customerId: user.customerId,
         },
         message:"User registered successfully",
         status:"success",
@@ -60,21 +70,40 @@ async function userLoginController(req,res){
         })
     }
 
+  console.log("Logging in user:", user._id);
+
+
+    user.previousLogin = user.lastLogin;
+
+user.lastLogin = new Date();
+
+await user.save();
+
     const token = jwt.sign({userId:user._id,
          role: user.role,
     },process.env.JWT_SECRET,{expiresIn:'3d'});
-    res.cookie('token',token).status(200).json({
-        user:{
-            _id:user._id,
-            email:user.email,
-            name:user.name ,
-             role: user.role 
-        },
+    res.cookie('token',token,{
+        httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    maxAge: 3 * 24 * 60 * 60 * 1000,
+
+    }).status(200).json({
         message:"User logged in successfully",
         status:{statusCode:200 , statusText:"success"},
-        token:token
-
+        token:token,
+         user: {
+              _id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    customerId: user.customerId,
+    lastLogin: user.lastLogin,
+    previousLogin: user.previousLogin,
+         }
     });
+
+    console.log("Generated token for:", user._id);
 }
 
 // user logout - POST - /api/auth/logout
@@ -84,7 +113,7 @@ async function userLogoutController(req,res){
   const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
 
   if(!token){
-    return res.status(400).json({
+    return res.status(200).json({
         message:"User logged out successfully",
     });
   }
