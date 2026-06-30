@@ -255,6 +255,8 @@ async function createInitialFundsTransaction(req, res) {
 async function getTransactionHistory(req, res) {
    
     try {
+
+       
         const { accountId } = req.params;
 
         // 1. Verify that the account belongs to the logged-in user
@@ -269,7 +271,7 @@ async function getTransactionHistory(req, res) {
                 message: "You are not authorized to view this account's transaction history.",
             });
         }
-
+         
         // 2. Fetch all transactions where this account is sender or receiver
         const transactions = await transactionModel
             .find({
@@ -278,10 +280,15 @@ async function getTransactionHistory(req, res) {
                     { toAccount: accountId },
                 ],
             })
+            .populate("fromAccount")
+             .populate("toAccount")
             .sort({ createdAt: -1 }) // newest first
+
+         
 
         // 3. Add transaction direction (DEBIT or CREDIT)
         const formattedTransactions = transactions.map((tx) => {
+             
             const isDebit =
                 tx.fromAccount &&
                 tx.fromAccount._id.toString() === accountId;
@@ -295,12 +302,16 @@ async function getTransactionHistory(req, res) {
                 direction: isDebit ? "DEBIT" : "CREDIT",
             };
         });
-
+    
         return res.status(200).json({
+            accountId,
             success: true,
             totalTransactions: formattedTransactions.length,
             transactions: formattedTransactions,
+
         });
+
+        
     } catch (error) {
         return res.status(500).json({
             success: false,

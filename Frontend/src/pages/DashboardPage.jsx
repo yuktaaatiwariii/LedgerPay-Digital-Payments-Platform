@@ -62,7 +62,7 @@ const totalTransactions = summaryData?.totalTransactions || 0;
                   Welcome back, {authUser?.name}
                 </h1>
 
-                <p className="mt-5 pl-10 text-lg text-teal-600">
+                <p className="mt-5 pl-10 text-lg text-cyan-600">
                   Your dashboard is secure and up-to-date.
                 </p>
 
@@ -70,14 +70,14 @@ const totalTransactions = summaryData?.totalTransactions || 0;
                 <div className="mt-3 pl-10 w-90 space-y-2">
                  <p className="text-lg text-black">
                    Customer ID:
-                 <span className="font-semibold text-teal-600 ml-2">
+                 <span className="font-semibold text-cyan-600 ml-2">
                     {authUser?.customerId}
                   </span>
                         </p>
 
                        <p className="text-lg text-black">
                         Last Login:
-                             <span className="font-semibold text-teal-600 ml-2">
+                             <span className="font-semibold text-cyan-600 ml-2">
                         {authUser?.previousLogin
                                ? new Date(
                             authUser.previousLogin
@@ -94,13 +94,13 @@ const totalTransactions = summaryData?.totalTransactions || 0;
                   <ActionCard
                     icon={<PlusCircle />}
                     title="Create Account"
-                    route="/accounts/create"
+                    route="/home/create"
                   />
 
                   <ActionCard
                     icon={<Send />}
                     title="Send Money"
-                    route="/transfer"
+                    route="/home/transaction"
                   />
 
                   <ActionCard
@@ -127,16 +127,16 @@ const totalTransactions = summaryData?.totalTransactions || 0;
              <div className="flex items-center gap-3">
              <ExternalLink
                size={30}
-               className="text-teal-500  w-20 h-20 p-2 rounded-xl bg-teal-100" />
+               className="text-cyan-500  w-20 h-20 p-2 rounded-xl bg-teal-100" />
             <div>
              <h3 className="text-xl  font-semibold text-gray-700">
                 Total Accounts
                </h3>
-                <div className="mt-2 text-6xl font-bold text-teal-600">
+                <div className="mt-2 text-6xl font-bold text-cyan-600">
              {isLoading ? "...." : totalAccounts}
              </div> </div>
              </div>
-             <div className="mt-2 h-1 rounded bg-teal-400"></div>
+             <div className="mt-2 h-1 rounded bg-cyan-400"></div>
             <div className=" h-12 rounded bg-gradient-to-b from-teal-100 to-transparent"></div>
             </div>
           
@@ -161,12 +161,12 @@ function ActionCard({ icon, title , route}) {
     <div 
      onClick={() => navigate(route)}
     className="rounded-2xl mt-5 flex bg-white p-5 text-center shadow transition hover:-translate-y-1">
-      <div className="mb-3 flex  justify-center  text-teal-600">
+      <div className="mb-3 flex  justify-center  text-cyan-600">
         {icon}
       </div>
 
       <p className="font-medium ml-4">{title}</p>
-      <ArrowUpRight className='ml-60 text-teal-600 '/>
+      <ArrowUpRight className='ml-60 text-cyan-600 '/>
     </div>
   );
 }
@@ -180,7 +180,7 @@ function SummaryCard({
 }) {
   if (loading) {
     return (
-      <div className="rounded-3xl border bg-white p-6 shadow">
+      <div className="rounded-3xl bg-white mt-4 p-6 shadow">
         Loading...
       </div>
     );
@@ -189,7 +189,7 @@ function SummaryCard({
   return (
     <div className="rounded-3xl mt-10 bg-white p-6 shadow w-80">
 
-      <h2 className="text-2xl font-bold text-teal-600 mb-5">
+      <h2 className="text-2xl font-bold text-cyan-600 mb-5">
         Monthly Summary
       </h2>
 
@@ -197,7 +197,7 @@ function SummaryCard({
 
         <div className="flex justify-between">
           <span>Total Balance</span>
-          <span className="font-bold text-green-600">
+          <span className="font-bold text-teal-600">
             ₹ {totalBalance}
           </span>
         </div>
@@ -225,7 +225,8 @@ function SummaryCard({
 
       </div>
 
-      <div className="mt-6 h-1 rounded-full bg-teal-500"></div>
+         <div className=" mt-3 h-1 rounded bg-cyan-400"></div>
+   
 
     </div>
   );

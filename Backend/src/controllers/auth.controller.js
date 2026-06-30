@@ -4,11 +4,12 @@ const emailService = require('../services/email.service');
 const tokenBlacklistModel = require('../models/tokenBlackList.model');
 
 
+
 // user register - POST - /api/auth/register
 
 async function  userRegisterController(req,res){
 
-    const {name,email,password } = req.body;
+    const {name,email,password } = req.body; 
 
     const isExists = await userModel.findOne({email:email});
     if(isExists){
@@ -40,6 +41,7 @@ const customerId =
             email:user.email,
             name:user.name,
             customerId: user.customerId,
+        
         },
         message:"User registered successfully",
         status:"success",

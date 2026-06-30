@@ -10,6 +10,9 @@ import { axiosInstance } from './lib/axios.js'
 import Home from "./components/HomePage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import { AuthProvider } from "./lib/AuthContext.jsx";
+import MyAccounts from './pages/MyAccounts.jsx';
+import Transaction from './pages/Transaction.jsx';
+import CreateAccount from './pages/CreateAccount.jsx';
 
 const App = () => {
 
@@ -42,13 +45,11 @@ if (isLoading) {
          <Route path="/home" element={authUser ? <Home /> : <Navigate to="/login" />} >
               <Route index element={<Navigate to="dashboard" replace />} />
                <Route path="dashboard" element={<DashboardPage />} />
-
-               
-                 {/* <Route path="accounts" element={<AccountsPage />} />  */}
-    {/* Add these as you build them */}
-    {/**/}
-    {/* <Route path="transfer" element={<TransferPage />} /> */}
-    {/* <Route path="payments" element={<PaymentsPage />} /> */}
+                <Route path="accounts" element={<MyAccounts />} />
+               <Route path="transaction" element={< Transaction/>} />
+                <Route path="create" element={< CreateAccount/>} />
+  
+   
                </Route>
       </Routes>
     </AuthProvider>

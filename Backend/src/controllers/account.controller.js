@@ -2,13 +2,18 @@ const accountModel = require('../models/account.model');
 const transactionModel = require("../models/transaction.model");
 
 async function createAccountController(req, res) {
+    
     const user = req.user;
+     const { type } = req.body;
+    
 
     const account = await accountModel.create({
         user :user._id,
+         type:type
     });
     res.status(201).json({
-        account
+        account,
+      accountType : account.type
     })
 }
 
@@ -26,16 +31,19 @@ async function getAccountBalanceController(req, res) {
 
   
 
-    const account = await accountModel.findOne({
-         _id: accountId ,
+    const account = await accountModel
+     .findOne ({_id: accountId ,
         user: req.user._id});
 
+    
 
     if (!account) {
         return res.status(404).json({ message: 'Account not found' });
     }
 
-   const balance = await account.getBalance();
+    const balance = await account.getBalance();
+
+   
 
     res.status(200).json({
         balance
@@ -45,6 +53,7 @@ async function getAccountBalanceController(req, res) {
 async function getAccountSummaryController(req,res){
 try {
     const userId = req.user._id;
+    
 
     // Get all accounts of logged in user
     const accounts = await accountModel.find({ user: userId });
@@ -96,7 +105,8 @@ for (const account of accounts) {
       totalBalance,
       totalCredit,
       totalDebit,
-      totalTransactions: transactions.length
+      totalTransactions: transactions.length,
+      
     });
 
   } catch (error) {

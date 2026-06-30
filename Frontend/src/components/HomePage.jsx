@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <>
     <div className="h-max border-black flex items-center justify-center bg-gray-100 p-6">
-      <div className=" h-[95%] flex max-w-7xl  overflow-hidden rounded-3xl bg-white shadow">
+      <div className=" h-max flex max-w-7xl  overflow-hidden rounded-3xl bg-white shadow ">
 
      <Sidebar/>
 

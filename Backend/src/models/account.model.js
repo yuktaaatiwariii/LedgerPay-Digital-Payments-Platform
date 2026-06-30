@@ -13,13 +13,21 @@ const accountSchema = new mongoose.Schema({
         default:"ACTIVE",
         enum:{
             values:["ACTIVE","FROZEN","CLOSED"],
-            mssage:"Status must be either ACTIVE, FROZEN or CLOSED"
+            message:"Status must be either ACTIVE, FROZEN or CLOSED"
         }
     },
      currency:{
         type:String,
         required:[true,"Account must have a currency"],
         default:"INR"
+     },
+     type:{
+         type:String,
+          default:"SAVING",
+          enum:{
+            values:["SAVING","SALARY","CURRENT","FIXED-DEPOSITE"],
+            message:"type must be one of them"
+          }
      }
     },{
         timestamps:true

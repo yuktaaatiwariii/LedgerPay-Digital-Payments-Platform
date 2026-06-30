@@ -24,8 +24,8 @@ import toast from "react-hot-toast";
 const menu = [
   { icon: LayoutDashboard, name: "Dashboard" , route:"/home/dashboard"},
   { icon: Wallet, name: "My Accounts" , route:"/home/accounts" },
-  { icon: ArrowRightLeft, name: "Transactions", route:"/home/transfer" },
-  { icon: CreditCard, name: "Payments" , route:"/home/payments" },
+  { icon: ArrowRightLeft, name: "Transactions", route:"/home/transaction" },
+  { icon: CreditCard, name: "Payment History" , route:"/home/accounts" },
 ];
 
 const Sidebar = () => {
@@ -51,9 +51,9 @@ const handleLogout = async () => {
 
 
   return (
-    <div>
+    <div className='min-h-112 bg-gradient-to-b from-[#021d57] to-[#03204b]'>
          {/* Sidebar */}
-        <aside className="w-72 h-186 bg-gradient-to-b  from-[#021d57] to-[#03204b] p-6 text-white">
+        <aside className="  p-6 text-white">
 
           <div className="mb-2 mx-5 flex items-center gap-5">
             <div className="rounded-xl bg-cyan-500 p-3">
@@ -86,7 +86,7 @@ const handleLogout = async () => {
 
          <button
             onClick={handleLogout}
-              className="flex items-center gap-2 mt-62 rounded-lg bg-cyan-500 px-4 py-2 text-white transition hover:bg-blue-500">
+              className="flex align-bottom items-center gap-2 mt-62 rounded-lg bg-cyan-500 px-4 py-2 text-white transition hover:bg-blue-500">
                <LogOut size={18} />
                      Logout
         </button>
