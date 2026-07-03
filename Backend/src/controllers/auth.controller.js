@@ -105,7 +105,7 @@ await user.save();
          }
     });
 
-    console.log("Generated token for:", user._id);
+console.log(user.role);
 }
 
 // user logout - POST - /api/auth/logout

@@ -2,7 +2,8 @@ const transactionModel = require('../models/transaction.model');
 const ledgerModel = require('../models/ledger.model');
 const emailService = require('../services/email.service');
 const accountModel = require('../models/account.model');
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
+const userModel = require('../models/user.model');
 
 /***
  * - Create a new transaction
@@ -324,7 +325,7 @@ async function getTransactionHistory(req, res) {
 async function getAllAccounts(req,res){
 
    const accounts = await accountModel.find()
-      .populate("user", "name email")
+      .populate("user", "name email accountId")
       .sort({ createdAt: -1 });
 
    res.status(200).json({
@@ -351,8 +352,9 @@ async function getTransferAccounts(req, res) {
 
 async function viewAllUsers(req,res){
 
-   const users = await accountModel.find()
-       .select("name email role createdAt");
+   const users = await userModel.find()
+     .select("name email customerId role createdAt ");
+
         res.status(200).json({
         success: true,
         totalUsers: users.length,

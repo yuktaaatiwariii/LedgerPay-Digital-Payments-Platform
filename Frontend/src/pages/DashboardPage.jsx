@@ -226,8 +226,6 @@ function SummaryCard({
       </div>
 
          <div className=" mt-3 h-1 rounded bg-cyan-400"></div>
-   
-
     </div>
   );
 }

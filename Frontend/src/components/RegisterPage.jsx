@@ -35,7 +35,7 @@ const registerMutation = useMutation({
 
   onSuccess: (data) => {
       toast.success("Account created successfully!");
-    console.log("Registration successful:", data);
+ 
         navigate("/login");
 
   },

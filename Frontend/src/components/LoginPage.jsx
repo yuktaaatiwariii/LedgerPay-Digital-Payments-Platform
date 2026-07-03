@@ -23,13 +23,24 @@ const registerMutation = useMutation({
     return res.data;
   },
 
-  onSuccess: (data) => {
-      toast.success("Login successfully!");
-    
-    queryClient.setQueryData(["authUser"], { user: data.user,});
-        navigate("/home/dashboard");
+ onSuccess: async (data) => {
+ 
+   toast.success("Login successfully!");
 
-  },
+  await queryClient.invalidateQueries({
+    queryKey: ["authUser"],
+  });
+
+   if (data.user.role === "ADMIN") {
+    console.log("Going to admin");
+    navigate("/admindashboard");
+  } else {
+    console.log("Going to user");
+    navigate("/home/dashboard");
+  }
+
+   
+},
 
   onError: (error) => {
     toast.error(
