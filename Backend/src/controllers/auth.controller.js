@@ -105,7 +105,6 @@ await user.save();
          }
     });
 
-console.log(user.role);
 }
 
 // user logout - POST - /api/auth/logout

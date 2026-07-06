@@ -38,10 +38,12 @@ const sendEmail = async (to, subject, text,html) => {
         console.log('Email sent: ' + info.response);
         console.log("preview URL: " + nodemailer.getTestMessageUrl(info));  
     } catch (error) {
-        console.error('Error sending email:', error);
+           console.error(error);
     }   
 
 };
+
+
 
 async function sendRegistrationEmail(userEmail, name) {
     const subject = 'Welcome to Our Service!';

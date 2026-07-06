@@ -1,4 +1,4 @@
-Banking Backend System
+LedgerPay – A Ledger-Based Digital Payments Platform
 
 <!-- Overview-  -->
 

@@ -1,4 +1,5 @@
-# 📚 API Reference - This document explains all the APIs available in the Bank Transaction Backend project.
+# 📚 API Reference - This document explains all the APIs available in the 
+**LedgerPay – A Ledger-Based Digital Payments Platform.**
 
 **Base URL** - /api
 

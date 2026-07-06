@@ -32,10 +32,8 @@ const registerMutation = useMutation({
   });
 
    if (data.user.role === "ADMIN") {
-    console.log("Going to admin");
     navigate("/admindashboard");
   } else {
-    console.log("Going to user");
     navigate("/home/dashboard");
   }
 
