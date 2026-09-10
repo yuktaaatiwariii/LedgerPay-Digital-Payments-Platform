@@ -1,10 +1,10 @@
- import { Mail, Lock, EyeOff } from "lucide-react";
+ import { Mail, Lock} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios"; // adjust the path if needed
-import toast,{Toaster} from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
 const LoginPage = () => {
@@ -25,7 +25,13 @@ const registerMutation = useMutation({
 
  onSuccess: async (data) => {
  
-   toast.success("Login successfully!");
+
+localStorage.setItem(
+    "accessToken",
+    data.accessToken
+);
+
+ toast.success("Login successfully!");
 
   await queryClient.invalidateQueries({
     queryKey: ["authUser"],

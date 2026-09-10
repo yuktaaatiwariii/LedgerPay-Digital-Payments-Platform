@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  useState from "react";
 import {
   Users,
   Wallet,
@@ -96,7 +96,7 @@ const logoutMutation = useMutation({
     return res.data;
   },
 
-  onSuccess: (data) => {
+  onSuccess: () => {
   
     toast.success("Logged out successfully");
 

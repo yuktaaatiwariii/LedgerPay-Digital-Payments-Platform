@@ -1,8 +1,10 @@
 const userModel = require('../models/user.model');
-const jwt = require('jsonwebtoken');
 const emailService = require('../services/email.service');
-const tokenBlacklistModel = require('../models/tokenBlackList.model');
+const RefreshToken = require("../models/refreshToken.model");
+const {generateAccessToken,generateRefreshToken} = require("../services/token.service");
+const jwt = require("jsonwebtoken");
 
+const hashToken = require("../utils/hashToken");
 
 
 // user register - POST - /api/auth/register
@@ -34,7 +36,7 @@ const customerId =
          customerId: customerId
     })
 
-    const token = jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'3d'});
+    const token = jwt.sign({userId:user._id},process.env.JWT_ACCESS_SECRET,{expiresIn:'30m'});
     res.cookie('token',token).status(201).json({
         user:{
             _id:user._id,
@@ -81,54 +83,182 @@ user.lastLogin = new Date();
 
 await user.save();
 
-    const token = jwt.sign({userId:user._id,
-         role: user.role,
-    },process.env.JWT_SECRET,{expiresIn:'3d'});
-    res.cookie('token',token,{
-        httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 3 * 24 * 60 * 60 * 1000,
+  
+// Generate Tokens
+const accessToken = generateAccessToken(user);
+const refreshToken = generateRefreshToken(user);
 
-    }).status(200).json({
-        message:"User logged in successfully",
-        status:{statusCode:200 , statusText:"success"},
-        token:token,
-         user: {
-              _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    customerId: user.customerId,
-    lastLogin: user.lastLogin,
-    previousLogin: user.previousLogin,
-         }
-    });
+// Hash Refresh Token
+const hashedRefreshToken = hashToken(refreshToken);
+
+// Save Refresh Token in MongoDB
+await RefreshToken.create({
+    user: user._id,
+    tokenHash: hashedRefreshToken,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+});
+
+// Send Refresh Token in HttpOnly Cookie
+res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+});
+
+// Return Access Token
+return res.status(200).json({
+    message: "User logged in successfully",
+    status: {
+        statusCode: 200,
+        statusText: "success",
+    },
+    accessToken,
+    user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        customerId: user.customerId,
+        lastLogin: user.lastLogin,
+        previousLogin: user.previousLogin,
+    },
+});
+
+
 
 }
 
+// Refresh Access Token - POST - /api/auth/refresh-token
+
+
+async function refreshAccessTokenController(req, res) {
+    try {
+
+        // Get Refresh Token from Cookie
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                message: "Refresh token missing",
+            });
+        }
+
+        // Verify JWT
+        const decoded = jwt.verify(
+            refreshToken,
+            process.env.JWT_REFRESH_SECRET
+        );
+
+        // Hash Incoming Token
+        const hashedToken = hashToken(refreshToken);
+
+        // Find Token in DB
+        const storedToken = await RefreshToken.findOne({
+            tokenHash: hashedToken,
+            revoked: false, expiresAt: { $gt: new Date() },
+        });
+
+        if (!storedToken) {
+            return res.status(401).json({
+                message: "Invalid Refresh Token",
+            });
+        }
+
+        // Load User
+        const user = await userModel.findById(decoded.userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
+
+        // Generate New Tokens
+        const newAccessToken = generateAccessToken(user);
+
+        const newRefreshToken = generateRefreshToken(user);
+
+        // Rotate Refresh Token
+        storedToken.tokenHash = hashToken(newRefreshToken);
+
+        storedToken.expiresAt = new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+        );
+
+        await storedToken.save();
+
+        // Replace Cookie
+        res.cookie("refreshToken", newRefreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
+        return res.status(200).json({
+            accessToken: newAccessToken,
+        });
+
+    } catch (err) {
+
+        return res.status(401).json({
+            message: "Invalid Refresh Token",
+        });
+
+    }
+}
+
+
 // user logout - POST - /api/auth/logout
 
-async function userLogoutController(req,res){   
+async function userLogoutController(req, res) {
+    try {
 
-  const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
+        const refreshToken = req.cookies.refreshToken;
 
-  if(!token){
-    return res.status(200).json({
-        message:"User logged out successfully",
-    });
-  }
-     res.cookie("token","");
+        if (!refreshToken) {
+            return res.status(200).json({
+                message: "User logged out successfully",
+            });
+        }
 
-    await tokenBlacklistModel.create({token:token});
+        // Hash the refresh token
+        const hashedToken = hashToken(refreshToken);
 
-    res.status(200).json({
-        message:"User logged out successfully",
-    });
-}   
+        // Revoke it
+        await RefreshToken.findOneAndUpdate(
+            {
+                tokenHash: hashedToken,
+            },
+            {
+                revoked: true,
+            }
+        );
+
+        // Clear Cookie
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+        });
+
+        return res.status(200).json({
+            message: "User logged out successfully",
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+            message: "Logout failed",
+        });
+
+    }
+}
 
 module.exports = {
     userRegisterController,
     userLoginController,
-    userLogoutController
+    userLogoutController,
+    refreshAccessTokenController
 }

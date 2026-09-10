@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { User, Mail, CreditCard, Wallet, Landmark } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { useQuery } from "@tanstack/react-query";
