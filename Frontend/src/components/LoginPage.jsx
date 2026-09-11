@@ -1,4 +1,4 @@
-import { Mail, Lock, Eye, EyeOff, ShieldCheck, User, Clock, BookOpen, Sun, Moon, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ShieldCheck,  Sun, Moon, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";

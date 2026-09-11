@@ -1,11 +1,11 @@
-import { User, Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowRightLeft, Bell } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowRightLeft } from "lucide-react";
 import pic from "../public/pic.png";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 const RegisterPage = () => {
   const [name, setName] = useState("");
@@ -20,7 +20,7 @@ const RegisterPage = () => {
       const res = await axiosInstance.post("/auth/register", userData);
       return res.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast.success("Account created successfully!");
       navigate("/login");
     },

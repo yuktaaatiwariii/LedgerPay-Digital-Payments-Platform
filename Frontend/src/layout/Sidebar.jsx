@@ -1,26 +1,18 @@
 import React from 'react'
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Wallet,
   ArrowRightLeft,
   CreditCard,
-  Search,
-  Bell,
-  User,
-  PlusCircle,
-  Send,
-  Landmark,
   LogOut,
-  ShieldCheck
+  ShieldCheck,
+  Landmark
 } from "lucide-react";
 import { useAuth } from "../lib/AuthContext.jsx";
 import { axiosInstance } from "../lib/axios";
-import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-
 
 const menu = [
   { icon: LayoutDashboard, name: "Dashboard" , route:"/home/dashboard"},
@@ -30,84 +22,91 @@ const menu = [
 ];
 
 const Sidebar = () => {
+  const { authUser } = useAuth();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-const { authUser } = useAuth();
-const queryClient = useQueryClient();
-const navigate = useNavigate();
-
-const handleLogout = async () => {
-  try {
-    await axiosInstance.post("/auth/logout");
-   queryClient.setQueryData(["authUser"], null);
-
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-
-    toast.success("Logout successfully!");
-    navigate("/login");
-
-  } catch (error) {
-    console.error(error);
-  }
-};
-
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      queryClient.setQueryData(["authUser"], null);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      toast.success("Logout successfully!");
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
-    <div className='min-h-112 bg-gradient-to-b from-[#021d57] to-[#03204b]'>
-         {/* Sidebar */}
-        <aside className="  p-6 text-white">
+    <aside className="w-[280px] bg-[#0A192F] text-white flex flex-col hidden md:flex fixed h-full z-20">
+      
+      {/* Logo */}
+      <div className="p-6 flex items-center gap-3 mb-4">
+        <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-600/30">
+          <Landmark size={24} strokeWidth={2.5} />
+        </div>
+        <div>
+          <h1 className="font-bold text-lg tracking-wider leading-tight">SMART BANK</h1>
+          <p className="text-[10px] text-slate-400 font-medium">Ledger Based Banking System</p>
+        </div>
+      </div>
 
-          <div className="mb-2 mx-5 flex items-center gap-5">
-            <div className="rounded-xl bg-cyan-500 p-3">
-              <Landmark size={30} />
-            </div>
+      {/* Navigation */}
+      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto">
+        {menu.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname.includes(item.route);
+          return (
+            <Link
+              key={item.name}   
+              to={item.route}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${isActive ? 'bg-blue-600 text-white font-medium shadow-md shadow-blue-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+            >
+              <Icon size={20} />
+              <span className="text-sm font-medium">{item.name}</span>
+            </Link>
+          );
+        })}
 
-            <div>
-              <h2 className="font-bold text-4xl leading-none">SMART</h2>
-              <h2 className="font-bold text-3xl leading-none">BANK</h2>
-            </div>
-          </div>
+        {authUser?.role === "ADMIN" && (
+          <Link
+            to="/admindashboard"
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5`}
+          >
+            <ShieldCheck size={20} />
+            <span className="text-sm font-medium">Admin Dashboard</span>
+          </Link>
+        )}
+      </nav>
 
-          
+      {/* Bottom Area */}
+      <div className="p-6 mt-auto space-y-4">
+        
+        {/* Secure Banking Widget */}
+        <div className="bg-gradient-to-br from-[#112240] to-[#0A192F] border border-slate-700/50 rounded-2xl p-4 shadow-lg relative overflow-hidden">
+           <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-600/20 rounded-full blur-2xl"></div>
+           <div className="bg-blue-600/20 w-8 h-8 rounded-lg flex items-center justify-center mb-3">
+             <ShieldCheck size={18} className="text-blue-400" />
+           </div>
+           <h3 className="font-bold text-sm text-white mb-1 relative z-10">Secure Banking</h3>
+           <p className="text-[10px] text-slate-400 font-medium relative z-10">Your money. Our priority.</p>
+        </div>
 
-          <nav className="space-y-3 mt-10 ">
-            {menu.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <Link
-                  key={item.name}   
-                   to={item.route}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 transition hover:bg-cyan-500/20 border border-cyan-400 hover:text-cyan-300
-                  " >
-             <Icon size={18} />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
-
-            {authUser?.role === "ADMIN" && (
-              <Link
-                to="/admindashboard"
-                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 transition hover:bg-cyan-500/20 border border-cyan-400 hover:text-cyan-300 mt-4"
-              >
-                <ShieldCheck size={18} />
-                <span>Admin Dashboard</span>
-              </Link>
-            )}
-
-         <button
-            onClick={handleLogout}
-              className="flex align-bottom items-center gap-2 mt-62 rounded-lg bg-cyan-500 px-4 py-2 text-white transition hover:bg-blue-500">
-               <LogOut size={18} />
-                     Logout
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-400 border border-slate-700/50 hover:text-white hover:bg-white/5"
+        >
+          <LogOut size={20} />
+          <span className="text-sm font-medium">Logout</span>
         </button>
 
+      </div>
+    </aside>
+  );
+};
 
-          </nav>
-        </aside>
-    </div>
-  )
-}
-
-export default Sidebar
+export default Sidebar;

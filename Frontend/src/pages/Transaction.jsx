@@ -122,15 +122,15 @@ const otherAccounts = accounts.filter(
 );
 
 
-  // Generate UUID automatically
-  useEffect(() => { generateKey();}, []);
-
   const generateKey = () => {
     setFormData({
        amount: "",
       idempotencyKey: crypto.randomUUID(),
     });
   };
+
+  // Generate UUID automatically
+  useEffect(() => { generateKey();}, []);
 
   const handleChange = (e) => {
     setFormData((prev) => ({

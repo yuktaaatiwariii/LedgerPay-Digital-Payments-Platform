@@ -183,7 +183,7 @@ export function AccountsModal({
 // =============================
 
 import { useEffect } from "react";
-import { RefreshCw, IndianRupee, Landmark } from "lucide-react";
+import { RefreshCw, IndianRupee } from "lucide-react";
 
 export function FundsModal({
   open,
@@ -199,6 +199,7 @@ export function FundsModal({
 
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData({
         toAccount: "",
         amount: "",
@@ -391,6 +392,7 @@ export function UserSearchModal({ open, onClose, user, accounts }) {
 
   useEffect(() => {
     if (open && user && accounts?.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(true);
       const fetchTransactions = async () => {
         try {

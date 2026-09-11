@@ -1,8 +1,7 @@
-import React from "react";
-import { Search, Wallet, CreditCard, Mail, User } from "lucide-react";
+
+import {  CreditCard, Mail, User } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../lib/axios";
-import axios from "axios";
 import { useAuth } from "../lib/AuthContext.jsx";
 import { useState } from "react";
 
