@@ -260,12 +260,13 @@ async function getTransactionHistory(req, res) {
        
         const { accountId } = req.params;
 
-        // 1. Verify that the account belongs to the logged-in user
-        const account = await accountModel.findOne({
-            _id: accountId,
-            user: req.user._id,
-        });
+        // 1. Verify that the account belongs to the logged-in user or the user is an ADMIN
+        const accountQuery = { _id: accountId };
+        if (req.user.role !== "ADMIN") {
+            accountQuery.user = req.user._id;
+        }
 
+        const account = await accountModel.findOne(accountQuery);
         if (!account) {
             return res.status(403).json({
                 success: false,

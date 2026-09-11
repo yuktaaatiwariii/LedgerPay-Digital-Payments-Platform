@@ -1,47 +1,35 @@
-import { User, Mail, Lock, Eye, EyeOff, ShieldCheck, ArrowRightLeft, Bell } from "lucide-react";
-import pic from "../public/pic.png";
+import { useState } from "react";
+import { Mail, ArrowLeft, ShieldCheck, ArrowRightLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../lib/axios";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
+import pic from "../public/pic.png";
 
-const RegisterPage = () => {
-  const [name, setName] = useState("");
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  const navigate = useNavigate();
-
-  const registerMutation = useMutation({
-    mutationFn: async (userData) => {
-      const res = await axiosInstance.post("/auth/register", userData);
+  const forgotPasswordMutation = useMutation({
+    mutationFn: async (data) => {
+      const res = await axiosInstance.post("/auth/forgot-password", data);
       return res.data;
     },
     onSuccess: (data) => {
-      toast.success("Account created successfully!");
-      navigate("/login");
+      toast.success(data.message || "Reset link sent!");
+      setEmail("");
     },
     onError: (error) => {
-      toast.error(error.response?.data?.message || "Registration failed");
+      toast.error(error.response?.data?.message || "Failed to send reset link");
     },
   });
 
-  const handleSignUp = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!name || !email || !password) {
-      toast.error("Please fill in all fields.");
+    if (!email) {
+      toast.error("Please enter your email address.");
       return;
     }
-
-    registerMutation.mutate({
-      name,
-      email,
-      password,
-    });
+    forgotPasswordMutation.mutate({ email });
   };
 
   return (
@@ -65,7 +53,7 @@ const RegisterPage = () => {
 
         <div className="relative z-10 max-w-lg mt-10">
           <h2 className="text-5xl font-extrabold leading-tight mb-6">
-            Join the future <br /> of banking.
+            Account Recovery
           </h2>
           <img className="w-full h-auto rounded-2xl shadow-2xl border border-white/10 mb-10 object-cover opacity-90 hover:opacity-100 transition-opacity" src={pic} alt="Smart Bank Interface" />
           
@@ -87,8 +75,8 @@ const RegisterPage = () => {
       </div>
 
       {/* Right Side: Form Component */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white overflow-y-auto">
-        <div className="w-full max-w-md py-10">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-md">
           
           {/* Mobile Logo (Visible only on small screens) */}
           <div className="flex lg:hidden items-center gap-3 mb-10 justify-center">
@@ -102,27 +90,12 @@ const RegisterPage = () => {
           </div>
 
           <div className="mb-10 text-center lg:text-left">
-            <h2 className="text-3xl font-bold text-[#0F172A] mb-2">Create an Account</h2>
-            <p className="text-slate-500 text-lg">Sign up today and experience modern banking.</p>
+            <h2 className="text-3xl font-bold text-[#0F172A] mb-2">Forgot Password</h2>
+            <p className="text-slate-500 text-lg">Enter your email and we'll send you a secure link to reset your password.</p>
           </div>
 
-          <form onSubmit={handleSignUp} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             
-            {/* Name Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Full Name</label>
-              <div className="flex items-center bg-[#F8FAFC] border border-slate-200 rounded-xl px-4 py-3 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                <User className="text-slate-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full ml-3 bg-transparent text-[#0F172A] outline-none placeholder:text-slate-400"
-                />
-              </div>
-            </div>
-
             {/* Email Input */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-700">Email Address</label>
@@ -138,43 +111,21 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Password</label>
-              <div className="flex items-center justify-between bg-[#F8FAFC] border border-slate-200 rounded-xl px-4 py-3 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
-                <div className="flex items-center w-full">
-                  <Lock className="text-slate-400" size={20} />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full ml-3 bg-transparent text-[#0F172A] outline-none placeholder:text-slate-400"
-                  />
-                </div>
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="text-slate-400 hover:text-slate-600 transition ml-2">
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
-
             <button
-              disabled={registerMutation.isPending}
+              disabled={forgotPasswordMutation.isPending}
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 rounded-xl shadow-md transition-all hover:shadow-lg disabled:opacity-70 disabled:hover:shadow-md"
             >
-              {registerMutation.isPending ? "Creating Account..." : "Create Account"}
+              {forgotPasswordMutation.isPending ? "Sending..." : "Send Reset Link"}
             </button>
             
           </form>
 
           <div className="mt-8 pt-8 border-t border-slate-200 text-center">
-            <p className="text-slate-600">
-              Already have an account?{" "}
-              <Link to="/login" className="font-bold text-blue-600 hover:text-blue-800 transition">
-                Sign In
-              </Link>
-            </p>
+            <Link to="/login" className="inline-flex items-center gap-2 font-bold text-blue-600 hover:text-blue-800 transition">
+              <ArrowLeft size={18} />
+              Back to Login
+            </Link>
           </div>
           
         </div>
@@ -183,4 +134,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default ForgotPassword;

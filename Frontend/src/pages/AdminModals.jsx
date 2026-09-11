@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
+import { axiosInstance } from "../lib/axios";
 
 
 // =============================
@@ -376,6 +377,116 @@ export function FundsModal({
 
       </div>
 
+    </div>
+  );
+}
+
+// =============================
+// User Search Modal
+// =============================
+
+export function UserSearchModal({ open, onClose, user, accounts }) {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (open && user && accounts?.length > 0) {
+      setLoading(true);
+      const fetchTransactions = async () => {
+        try {
+          const userAccounts = accounts.filter(acc => acc.user?._id === user._id);
+          const allTx = [];
+          for (const acc of userAccounts) {
+            const res = await axiosInstance.get(`/transactions/history/${acc._id}`);
+            if (res.data.transactions) {
+              allTx.push(...res.data.transactions);
+            }
+          }
+          // Sort by date descending
+          allTx.sort((a, b) => new Date(b.date) - new Date(a.date));
+          setTransactions(allTx);
+        } catch (err) {
+          console.error("Error fetching transactions", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchTransactions();
+    }
+  }, [open, user, accounts]);
+
+  if (!open || !user) return null;
+
+  const userAccounts = accounts?.filter(acc => acc.user?._id === user._id) || [];
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 p-4">
+      <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+        
+        {/* Header */}
+        <div className="p-8 border-b border-slate-100 flex justify-between items-start bg-slate-50 shrink-0">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">{user.name}</h2>
+            <p className="text-slate-500 font-medium text-sm mt-1">{user.email} • ID: {user.customerId}</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition">
+            <X size={20} className="text-slate-500" />
+          </button>
+        </div>
+
+        {/* Content Body */}
+        <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-white">
+          
+          {/* User Accounts */}
+          <div>
+             <h3 className="text-lg font-bold text-slate-800 mb-4">User Accounts ({userAccounts.length})</h3>
+             {userAccounts.length === 0 ? (
+               <p className="text-slate-500 text-sm">No accounts found for this user.</p>
+             ) : (
+               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 {userAccounts.map(acc => (
+                   <div key={acc._id} className="p-4 rounded-xl border border-slate-200 bg-slate-50">
+                      <p className="text-xs font-bold text-blue-600 mb-1">{acc.type} Account</p>
+                      <p className="font-mono text-sm text-slate-800 font-medium">{acc._id}</p>
+                      <p className={`text-xs font-bold mt-2 ${acc.status === 'Active' ? 'text-emerald-500' : 'text-slate-400'}`}>{acc.status}</p>
+                   </div>
+                 ))}
+               </div>
+             )}
+          </div>
+
+          {/* Transactions */}
+          <div>
+             <h3 className="text-lg font-bold text-slate-800 mb-4">Transaction History</h3>
+             {loading ? (
+               <p className="text-slate-500 text-sm animate-pulse">Loading transactions...</p>
+             ) : transactions.length === 0 ? (
+               <p className="text-slate-500 text-sm">No transactions found.</p>
+             ) : (
+               <div className="space-y-3">
+                 {transactions.map((tx, idx) => {
+                   const isCredit = userAccounts.some(acc => acc._id === tx.toAccount?._id);
+                   return (
+                     <div key={idx} className="flex justify-between items-center p-4 rounded-xl border border-slate-100 hover:border-slate-200 hover:shadow-sm transition bg-white">
+                       <div>
+                         <p className="text-sm font-bold text-slate-800">{tx.type}</p>
+                         <p className="text-xs text-slate-500 font-medium mt-0.5">{new Date(tx.date).toLocaleString()}</p>
+                       </div>
+                       <div className="text-right">
+                         <p className={`text-sm font-bold ${isCredit ? 'text-emerald-500' : 'text-red-500'}`}>
+                           {isCredit ? '+' : '-'} ₹ {tx.amount}
+                         </p>
+                         <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-500 mt-1 inline-block">{tx.status}</span>
+                       </div>
+                     </div>
+                   );
+                 })}
+               </div>
+             )}
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }

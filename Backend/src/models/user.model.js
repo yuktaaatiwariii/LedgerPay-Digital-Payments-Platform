@@ -42,6 +42,14 @@ lastLogin: {
 
 previousLogin: {
   type: Date,
+},
+
+resetPasswordToken: {
+  type: String,
+},
+
+resetPasswordExpires: {
+  type: Date,
 }
 
 },{

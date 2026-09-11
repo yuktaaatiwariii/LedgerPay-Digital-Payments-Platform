@@ -14,6 +14,8 @@ import MyAccounts from './pages/MyAccounts.jsx';
 import Transaction from './pages/Transaction.jsx';
 import CreateAccount from './pages/CreateAccount.jsx';
 import AdminDashboard from './components/AdminDashboard.jsx';
+import ForgotPassword from './components/ForgotPassword.jsx';
+import ResetPassword from './components/ResetPassword.jsx';
 
 const App = () => {
 
@@ -42,6 +44,8 @@ if (isLoading) {
       <Routes>
         <Route path="/" element={ <LandingPage/>} />
         <Route path="/register" element={ !authUser ? <RegisterPage />: <Navigate to="/home/dashboard" />} />
+        <Route path="/forgot-password" element={ !authUser ? <ForgotPassword /> : <Navigate to="/home/dashboard" />} />
+        <Route path="/reset-password/:token" element={ !authUser ? <ResetPassword /> : <Navigate to="/home/dashboard" />} />
       <Route path="/login" element={ !authUser ? (  <LoginPage /> ) : authUser.role === "ADMIN" ? (
       <Navigate to="/admindashboard" /> ) : (  <Navigate to="/home/dashboard" /> )}/>
          <Route path="/home" element={authUser ? <Home /> : <Navigate to="/login" />} >

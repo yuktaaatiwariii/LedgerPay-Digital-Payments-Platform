@@ -22,12 +22,17 @@ async function authMiddleware(req, res, next) {
 
         const user = await userModel
             .findById(decoded.userId)
-            .select("+role");
+            .select("+role +email");
 
         if (!user) {
             return res.status(401).json({
                 message: "User not found",
             });
+        }
+
+        const adminEmails = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : [];
+        if (adminEmails.includes(user.email)) {
+            user.role = "ADMIN";
         }
 
         req.user = user;
@@ -64,12 +69,18 @@ async function authSystemMiddleware(req, res, next) {
 
         const user = await userModel
             .findById(decoded.userId)
-            .select("+role");
+            .select("+role +email");
 
         if (!user) {
             return res.status(401).json({
                 message: "User not found",
             });
+        }
+
+        const adminEmails = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : [];
+
+        if (adminEmails.includes(user.email)) {
+            user.role = "ADMIN";
         }
 
         if (user.role !== "ADMIN") {

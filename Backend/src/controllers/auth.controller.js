@@ -83,9 +83,11 @@ user.lastLogin = new Date();
 
 await user.save();
 
+const adminEmails = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : [];
+const effectiveRole = adminEmails.includes(user.email) ? "ADMIN" : user.role;
   
 // Generate Tokens
-const accessToken = generateAccessToken(user);
+const accessToken = generateAccessToken({ _id: user._id, role: effectiveRole });
 const refreshToken = generateRefreshToken(user);
 
 // Hash Refresh Token
@@ -118,7 +120,7 @@ return res.status(200).json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: effectiveRole,
         customerId: user.customerId,
         lastLogin: user.lastLogin,
         previousLogin: user.previousLogin,
@@ -256,9 +258,87 @@ async function userLogoutController(req, res) {
     }
 }
 
+const crypto = require("crypto");
+
+// Forgot Password - POST - /api/auth/forgot-password
+async function forgotPasswordController(req, res) {
+    try {
+        const { email } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "No account with that email address exists.",
+                status: "failed"
+            });
+        }
+
+        const resetToken = crypto.randomBytes(20).toString("hex");
+
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+        await user.save();
+
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+        
+        await emailService.sendPasswordResetEmail(user.email, resetUrl);
+
+        return res.status(200).json({
+            message: "An email has been sent to " + user.email + " with further instructions.",
+            status: "success"
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error processing request",
+            status: "failed"
+        });
+    }
+}
+
+// Reset Password - POST - /api/auth/reset-password/:token
+async function resetPasswordController(req, res) {
+    try {
+        const { password } = req.body;
+        const { token } = req.params;
+
+        const user = await userModel.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Password reset token is invalid or has expired.",
+                status: "failed"
+            });
+        }
+
+        // We don't hash manually because the pre-save hook handles it
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+
+        await user.save();
+
+        return res.status(200).json({
+            message: "Your password has been successfully changed.",
+            status: "success"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Error processing request",
+            status: "failed"
+        });
+    }
+}
+
 module.exports = {
     userRegisterController,
     userLoginController,
     userLogoutController,
-    refreshAccessTokenController
+    refreshAccessTokenController,
+    forgotPasswordController,
+    resetPasswordController
 }

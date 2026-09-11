@@ -11,7 +11,8 @@ import {
   PlusCircle,
   Send,
   Landmark,
-  LogOut
+  LogOut,
+  ShieldCheck
 } from "lucide-react";
 import { useAuth } from "../lib/AuthContext.jsx";
 import { axiosInstance } from "../lib/axios";
@@ -30,6 +31,7 @@ const menu = [
 
 const Sidebar = () => {
 
+const { authUser } = useAuth();
 const queryClient = useQueryClient();
 const navigate = useNavigate();
 
@@ -83,6 +85,16 @@ const handleLogout = async () => {
                 </Link>
               );
             })}
+
+            {authUser?.role === "ADMIN" && (
+              <Link
+                to="/admindashboard"
+                className="flex w-full items-center gap-3 rounded-xl px-4 py-3 transition hover:bg-cyan-500/20 border border-cyan-400 hover:text-cyan-300 mt-4"
+              >
+                <ShieldCheck size={18} />
+                <span>Admin Dashboard</span>
+              </Link>
+            )}
 
          <button
             onClick={handleLogout}
