@@ -4,6 +4,7 @@ const emailService = require('../services/email.service');
 const accountModel = require('../models/account.model');
 const mongoose = require("mongoose");
 const userModel = require('../models/user.model');
+const { invalidateDashboardCache } = require('../middleware/cache.middleware');
 
 /***
  * - Create a new transaction
@@ -170,6 +171,7 @@ async function createTransaction(req, res) {
         // 10. send email notification
     try {
     await emailService.sendTransactionEmail(req.user.email, req.user.name, amount, toAccount)
+    await invalidateDashboardCache(req.user._id);
 
     return res.status(201).json({
         message: "Transaction completed successfully",

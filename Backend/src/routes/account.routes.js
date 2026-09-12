@@ -2,6 +2,7 @@ const express = require('express');
 
 const authMiddleware = require('../middleware/auth.middleware');
 const accountController = require('../controllers/account.controller');
+const { cacheDashboard } = require('../middleware/cache.middleware');
 
 const router = express.Router();
 
@@ -32,7 +33,7 @@ router.get('/balance/:accountId', authMiddleware.authMiddleware, accountControll
  *  -GET /api/accounts/getSummary
  */
 
-router.get("/getSummary",authMiddleware.authMiddleware,accountController.getAccountSummaryController);
+router.get("/getSummary",authMiddleware.authMiddleware, cacheDashboard, accountController.getAccountSummaryController);
 
 
 

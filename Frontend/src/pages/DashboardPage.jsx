@@ -12,7 +12,7 @@ import {
   User,
   Calendar,
   CreditCard,
-  Building2
+
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/AuthContext.jsx";
@@ -38,7 +38,7 @@ export default function DashboardPage() {
   const totalAccounts = accounts.length;
 
   // Fetch Summary
-  const { data: summaryData, isLoading: summaryLoading } = useQuery({
+  const { data: summaryData } = useQuery({
     queryKey: ["summary"],
     queryFn: async () => {
       const res = await axiosInstance.get("/accounts/getSummary");
@@ -298,7 +298,6 @@ export default function DashboardPage() {
                <div className="space-y-4">
                  {recentTransactions.map((tx, idx) => {
                    const isCredit = accounts.some(acc => acc._id === tx.toAccount?._id);
-                   const isSystem = tx.fromAccount?.user === null || tx.type === 'Initial Deposit';
                    return (
                      <div key={idx} className="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl transition cursor-pointer">
                        <div className="flex items-center gap-3">

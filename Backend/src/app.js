@@ -7,7 +7,8 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 app.use(express.json());
-
+const { generalLimiter } = require('./middleware/rateLimiter.middleware');
+app.use('/api', generalLimiter);
 app.use(cors({
   origin: 'http://localhost:5173', // Adjust the origin as needed
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
