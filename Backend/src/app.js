@@ -10,7 +10,7 @@ app.use(express.json());
 const { generalLimiter } = require('./middleware/rateLimiter.middleware');
 app.use('/api', generalLimiter);
 app.use(cors({
-  origin: 'http://localhost:5173', // Adjust the origin as needed
+  origin: process.env.CLIENT_URL || 'http://localhost:5173', // Uses env var or defaults to local dev
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 }));
 
