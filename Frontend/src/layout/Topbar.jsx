@@ -1,23 +1,33 @@
 import React from 'react';
 import { useAuth } from "../lib/AuthContext.jsx";
-import { User, Search, Bell, ChevronDown } from "lucide-react";
+import { User, Search, Bell, ChevronDown, Menu, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const Topbar = () => {
+const Topbar = ({ setIsSidebarOpen }) => {
   const { authUser } = useAuth();
+  const navigate = useNavigate();
 
   return (
-    <header className="h-20 bg-[#0A192F] border-b border-slate-700/50 flex items-center justify-between px-8 sticky top-0 z-10">
+    <header className="h-20 bg-[#0A192F] border-b border-slate-700/50 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-10">
       
-      {/* Search Bar */}
-      <div className="flex-1 max-w-xl">
-         <div className="relative flex items-center w-full bg-[#112240] border border-slate-700 rounded-xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all">
-            <Search size={18} className="text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Search transactions, accounts..." 
-              className="w-full bg-transparent ml-3 outline-none text-sm text-slate-200 placeholder:text-slate-500 font-medium" 
-            />
-         </div>
+      {/* Search Bar & Hamburger */}
+      <div className="flex-1 max-w-xl flex items-center gap-3">
+         {setIsSidebarOpen && (
+           <button 
+             className="md:hidden text-slate-400 hover:text-white transition p-1"
+             onClick={() => setIsSidebarOpen(true)}
+           >
+             <Menu size={24} />
+           </button>
+         )}
+         <button 
+           className="text-slate-400 hover:text-white transition p-1"
+           onClick={() => navigate(-1)}
+           title="Go Back"
+         >
+           <ArrowLeft size={24} />
+         </button>
+
       </div>
 
       {/* Right Side Items */}

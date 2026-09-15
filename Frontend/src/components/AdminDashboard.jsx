@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   Users, Wallet, ShieldCheck, ArrowLeftRight, Activity,
   LayoutDashboard, Clock,  Settings as
-  Search, Bell,  ArrowUpRight, ArrowDownRight,  ArrowRight
+  Search, Bell,  ArrowUpRight, ArrowDownRight,  ArrowRight, Menu, ArrowLeft
 } from "lucide-react";
 import { axiosInstance } from "../lib/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ export default function AdminDashboard() {
   const [showUsers, setShowUsers] = useState(false);
   const [showAccounts, setShowAccounts] = useState(false);
   const [showFunds, setShowFunds] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -110,8 +111,16 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-screen bg-slate-50 font-sans">
+      {/* Mobile Backdrop */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-[280px] bg-[#0A192F] text-white flex flex-col hidden md:flex fixed h-full z-20">
+      <aside className={`w-[280px] bg-[#0A192F] text-white flex flex-col fixed h-full z-30 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-6 flex items-center gap-3 mb-4">
           <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-600/30">
             <ShieldCheck size={24} strokeWidth={2.5} />
@@ -125,7 +134,10 @@ export default function AdminDashboard() {
           {sidebarMenu.map((item, idx) => (
             <button
               key={idx}
-              onClick={item.onClick}
+              onClick={() => {
+                item.onClick();
+                setIsSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${item.active ? 'bg-blue-600 text-white font-medium shadow-md shadow-blue-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
             >
               <item.icon size={20} />
@@ -149,10 +161,23 @@ export default function AdminDashboard() {
       <main className="flex-1 ml-0 md:ml-[280px] flex flex-col min-h-screen relative">
         
         {/* Top Header */}
-        <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-10">
-          <div className="flex-1 max-w-xl relative">
-             <div className="relative flex items-center w-full max-w-md bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 focus-within:bg-white transition-all">
-                <Search size={18} className="text-slate-400" />
+        <header className="h-20 bg-white border-b border-slate-100 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-10">
+          <div className="flex-1 max-w-xl relative flex items-center gap-3">
+             <button 
+               className="md:hidden text-slate-400 hover:text-slate-600 transition p-1"
+               onClick={() => setIsSidebarOpen(true)}
+             >
+               <Menu size={24} />
+             </button>
+             <button 
+               className="text-slate-400 hover:text-slate-600 transition p-1"
+               onClick={() => navigate(-1)}
+               title="Go Back"
+             >
+               <ArrowLeft size={24} />
+             </button>
+             <div className="relative flex items-center w-full max-w-md bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 focus-within:ring-2 focus-within:ring-blue-100 focus-within:border-blue-500 focus-within:bg-white transition-all hidden sm:flex">
+                <Search size={18} className="text-slate-400 shrink-0" />
                 <input 
                   type="text" 
                   placeholder="Search users..." 

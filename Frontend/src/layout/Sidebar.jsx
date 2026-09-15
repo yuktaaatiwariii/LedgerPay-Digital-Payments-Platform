@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -21,7 +21,7 @@ const menu = [
   { icon: CreditCard, name: "Payment History" , route:"/home/accounts" },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
   const { authUser } = useAuth();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -41,7 +41,15 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="w-[280px] bg-[#0A192F] text-white flex flex-col hidden md:flex fixed h-full z-20">
+    <>
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 z-20 "
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+      <aside className={`w-[280px] bg-[#0A192F] text-white flex flex-col fixed h-full z-30 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
       
       {/* Logo */}
       <div className="p-6 flex items-center gap-3 mb-4">
@@ -63,6 +71,7 @@ const Sidebar = () => {
             <Link
               key={item.name}   
               to={item.route}
+              onClick={() => setIsOpen(false)}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition ${isActive ? 'bg-blue-600 text-white font-medium shadow-md shadow-blue-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
             >
               <Icon size={20} />
@@ -74,6 +83,7 @@ const Sidebar = () => {
         {authUser?.role === "ADMIN" && (
           <Link
             to="/admindashboard"
+            onClick={() => setIsOpen(false)}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition text-slate-400 hover:text-white hover:bg-white/5`}
           >
             <ShieldCheck size={20} />
@@ -106,6 +116,7 @@ const Sidebar = () => {
 
       </div>
     </aside>
+    </>
   );
 };
 

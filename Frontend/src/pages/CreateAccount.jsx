@@ -78,7 +78,7 @@ createAccountMutation.mutate(formData.type);
 
   return (
     <>
-    <div className="flex  p-4">
+    <div className="flex flex-col xl:flex-row p-4 gap-6 w-full max-w-7xl mx-auto">
 
       <div className="">
         {/* Heading */}
@@ -95,7 +95,7 @@ createAccountMutation.mutate(formData.type);
       
           {/* Info */}
 
-          <div className="bg-cyan-50 rounded-2xl mx-10  p-5">
+          <div className="bg-cyan-50 rounded-2xl w-full p-5 sm:p-6 mt-4 xl:mt-0">
 
             <div className="flex items-center gap-3 mb-3">
 
@@ -124,11 +124,11 @@ createAccountMutation.mutate(formData.type);
 </div>
       {/* Main */}
 
-      <div className="mt-3 grid grid-cols-2 gap-4 pl-4 ">
+      <div className="mt-6 grid grid-cols-1 xl:grid-cols-2 gap-6 pl-0 sm:pl-4 w-full max-w-7xl mx-auto">
 
         {/* Left */}
 
-        <div className=" h-max bg-white rounded-3xl shadow-lg mx-8 p-8 max-w-100">
+        <div className="h-max bg-white rounded-3xl shadow-lg w-full max-w-full p-6 sm:p-8">
 
           <h2 className="text-2xl font-bold text-cyan-700 mb-8">
             Customer Information
@@ -211,7 +211,7 @@ createAccountMutation.mutate(formData.type);
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-3xl shadow-lg p-8 max-w-100"
+          className="bg-white rounded-3xl shadow-lg w-full max-w-full p-6 sm:p-8"
         >
 
           <h2 className="text-2xl font-bold text-cyan-700 mb-6">
@@ -230,7 +230,7 @@ createAccountMutation.mutate(formData.type);
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className=" w-70 mt-2 rounded-xl border p-2 focus:ring-2 focus:ring-cyan-500 outline-none"
+              className="w-full mt-2 rounded-xl border p-3 focus:ring-2 focus:ring-cyan-500 outline-none"
             >
               <option value="SAVING">Saving Account</option>
               <option value="SALARY">Salary Account</option>
@@ -253,18 +253,18 @@ createAccountMutation.mutate(formData.type);
             <input
               value="INR (Indian Rupee)"
               readOnly
-              className="w-70 mt-2 rounded-xl border bg-gray-100 p-2"
+              className="w-full mt-2 rounded-xl border bg-gray-100 p-3"
             />
 
           </div>
 
           {/* Buttons */}
 
-          <div className="flex  gap-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 mt-8">
 
             <button
               type="button"
-              className="px-6  rounded-xl border border-cyan-600 text-cyan-600 hover:bg-cyan-50"
+              className="px-6 py-3 sm:py-2 rounded-xl border border-cyan-600 text-cyan-600 hover:bg-cyan-50 w-full sm:w-auto"
             >
               Cancel
             </button>
@@ -272,7 +272,7 @@ createAccountMutation.mutate(formData.type);
             <button
                 type="submit"
                      disabled={createAccountMutation.isPending}
-              className="px-8 py-2 rounded-xl bg-cyan-600 text-white font-semibold hover:bg-cyan-700"
+              className="px-8 py-3 sm:py-2 rounded-xl bg-cyan-600 text-white font-semibold hover:bg-cyan-700 w-full sm:w-auto"
             >
               {createAccountMutation.isPending
               ? "Creating..."

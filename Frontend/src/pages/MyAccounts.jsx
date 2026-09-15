@@ -76,7 +76,7 @@ if (isLoading) {
 }
 
   return (
-    <div className="h-full p-6 w-240 ">
+    <div className="h-full p-4 sm:p-6 w-full max-w-7xl mx-auto">
 
       {/* Heading */}
 
@@ -94,7 +94,7 @@ if (isLoading) {
 
          {/* Important Info */}
 
-     <div className="flex gap-20">
+     <div className="flex flex-col sm:flex-row gap-6 sm:gap-20">
            <div className="flex  ">
              <CreditCard className="text-cyan-300 mr-2" />
                   <p className="text-sm font-bold text-gray-900">
@@ -132,7 +132,7 @@ if (isLoading) {
 
       {/* Cards */}
 
-      <div className=" mt-7 w-200 grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="mt-7 w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         {accounts.map((account) => (
           <div
@@ -173,17 +173,17 @@ if (isLoading) {
 
            <div className="mt-6">
 
-    <div className="flex items-center gap-5">
+    <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
 
         <button
             onClick={() => handleBalance(account._id)}
-            className="rounded-xl bg-cyan-600 px-5 py-3 text-white font-semibold hover:bg-cyan-800 transition"
+            className="rounded-xl bg-cyan-600 px-5 py-3 text-white font-semibold hover:bg-cyan-800 transition w-full sm:w-auto"
         >
             Check Balance
         </button>
 
            {balances[account._id] !== undefined && (
-              <div className="ml-4 bg-green-100 text-green-700 px-4 py-2 rounded-xl">
+              <div className="bg-green-100 text-green-700 px-4 py-2 rounded-xl w-full sm:w-auto text-center">
               ₹ {balances[account._id]}
                 </div>
                   ) }
@@ -191,7 +191,7 @@ if (isLoading) {
 
      <button
     onClick={() => handleTransactionHistory(account._id)}
-    className="mt-5 rounded-xl border border-cyan-600 px-5 py-3 text-cyan-600 font-semibold hover:bg-cyan-50 transition"
+    className="mt-4 sm:mt-5 rounded-xl border border-cyan-600 px-5 py-3 text-cyan-600 font-semibold hover:bg-cyan-50 transition w-full"
 >
     Transaction History
      </button>
@@ -203,7 +203,7 @@ if (isLoading) {
      {showHistory && (
   <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
 
-    <div className="bg-white w-[500px] max-h-[60vh] shadow-2xl rounded-3xl p-8">
+    <div className="bg-white w-[calc(100%-2rem)] max-w-lg max-h-[60vh] shadow-2xl rounded-3xl p-6 sm:p-8 overflow-hidden flex flex-col">
 
       <div className="flex justify-between items-center mb-5">
 

@@ -140,8 +140,7 @@ const otherAccounts = accounts.filter(
   };
 
   return (
-    <div className="p-6">
-
+    <div className="p-4 sm:p-6 w-full max-w-5xl mx-auto">
       {/* Heading */}
 
       <h1 className="text-5xl font-bold text-gray-800">
@@ -152,7 +151,7 @@ const otherAccounts = accounts.filter(
         Securely transfer money between bank accounts.
       </p>
 
-      <div className="grid grid-cols-2 gap-6 mt-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
 
         {/* LEFT */}
 
@@ -340,8 +339,7 @@ const otherAccounts = accounts.filter(
 
           {/* Buttons */}
 
-          <div className="flex justify-end gap-4 mt-10">
-
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 mt-10">
             <button
               type="button"
               onClick={() =>
@@ -352,7 +350,7 @@ const otherAccounts = accounts.filter(
             idempotencyKey: crypto.randomUUID(),
         })
     }
-              className="border border-cyan-600 px-6 py-2 rounded-xl text-cyan-700"
+              className="border border-cyan-600 px-6 py-3 rounded-xl text-cyan-700 w-full sm:w-auto text-center"
             >
               Cancel
             </button>
@@ -360,7 +358,7 @@ const otherAccounts = accounts.filter(
            <button
             type="submit"
              disabled={transferMutation.isPending}
-                  className="bg-cyan-600 text-white rounded-xl px-8 py-3 hover:bg-cyan-700 disabled:bg-gray-400">
+                  className="bg-cyan-600 text-white rounded-xl px-8 py-3 w-full sm:w-auto hover:bg-cyan-700 disabled:bg-gray-400">
                      {transferMutation.isPending
                     ? "Processing..."
                       : "Transfer Money"}

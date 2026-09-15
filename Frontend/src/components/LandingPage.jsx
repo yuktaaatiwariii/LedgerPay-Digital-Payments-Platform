@@ -37,22 +37,22 @@ const LandingPage = () => {
     <div className="min-h-screen text-gray-800">
       <div className= " z-[-1] h-full w-full bg-linear-to-r from-blue-50 via-blue-100 to-blue-200 pb-40 "  >
       {/* Navbar */}
-      <header className="pt-4 ">
-        <div className="mx-auto flex max-w-7xl items-center justify-between rounded-3xl bg-blue-50 px-8 py-3 shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="text-4xl text-blue-700">↻</div>
-            <h1 className="text-3xl font-bold text-slate-800">
+      <header className="pt-4 px-4 sm:px-0">
+        <div className="mx-auto flex max-w-7xl items-center justify-between rounded-3xl bg-blue-50 px-4 sm:px-8 py-3 shadow-xl">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="text-2xl sm:text-4xl text-blue-700">↻</div>
+            <h1 className="text-xl sm:text-3xl font-bold text-slate-800">
               Smart Bank
             </h1>
           </div>
 
-          <div className="flex gap-4">
-            <Link to="/login"  className="rounded-full border border-slate-500 px-8 py-3 font-semibold"> 
+          <div className="flex gap-2 sm:gap-4">
+            <Link to="/login"  className="rounded-full border border-slate-500 px-4 sm:px-8 py-2 sm:py-3 font-semibold text-sm sm:text-base"> 
               Login
             </Link>
 
             <Link to="/register"
-                 className="rounded-full bg-blue-600 px-8 py-3 font-semibold text-white hover:bg-blue-700" >
+                 className="rounded-full bg-blue-600 px-4 sm:px-8 py-2 sm:py-3 font-semibold text-white hover:bg-blue-700 text-sm sm:text-base" >
                Register
             </Link>
           </div>
@@ -63,7 +63,7 @@ const LandingPage = () => {
       <section className="mx-auto mt-14 grid max-w-7xl grid-cols-1 items-center gap-6 px-8 lg:grid-cols-2">
 
         <div>
-          <h2 className="text-7xl font-extrabold leading-tight text-blue-800">
+          <h2 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold leading-tight text-blue-800 mt-8 sm:mt-0">
             Smart Bank
             <br />
             Transaction
@@ -71,30 +71,30 @@ const LandingPage = () => {
             System
           </h2>
 
-          <p className="mt-6 max-w-xl text-[22px] leading-relaxed text-gray-700">
+          <p className="mt-4 sm:mt-6 max-w-xl text-lg sm:text-[22px] leading-relaxed text-gray-700">
             The Secure, Efficient, and Real-Time Solution for
             modern financial management.
           </p>
 
-          <div className="mt-7 flex gap-5">
-            <button className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg">
+          <div className="mt-6 sm:mt-7 flex flex-col sm:flex-row gap-4 sm:gap-5">
+            <button className="rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white shadow-lg w-full sm:w-auto">
               Get Started Free
             </button>
 
-            <button className="rounded-full border border-gray-500 bg-white px-8 py-4 text-lg font-semibold">
+            <button className="rounded-full border border-gray-500 bg-white px-8 py-4 text-lg font-semibold w-full sm:w-auto">
               Learn More
             </button>
           </div>
         </div>
 
         {/* Illustration Placeholder */}
-        <div className=" ">
-        <img className='h-110' src={image} alt="bank pic" />
+        <div className="w-full mt-8 lg:mt-0">
+          <img className="w-full h-auto object-contain max-h-[500px]" src={image} alt="bank pic" />
         </div>
       </section>
     </div>
       {/* Features */}
-      <section className=" mx-auto -mt-20 grid max-w-7xl gap-6 px-8 md:grid-cols-2 xl:grid-cols-4">
+      <section className="mx-auto mt-10 lg:-mt-20 grid max-w-7xl gap-6 px-4 sm:px-8 md:grid-cols-2 xl:grid-cols-4">
 
         {features.map((item) => (
           <div
@@ -123,7 +123,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="mt-24 border-t bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-8 py-8 md:flex-row">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-8 py-8 md:flex-row text-center md:text-left">
 
           <div className="flex gap-8 text-lg">
             <a href="/">Home</a>
@@ -135,7 +135,7 @@ const LandingPage = () => {
           </div>
 
           <div className="text-gray-500">
-            © 2025 Smart Bank
+            © 2026 Smart Bank
           </div>  
         </div>
       </footer>

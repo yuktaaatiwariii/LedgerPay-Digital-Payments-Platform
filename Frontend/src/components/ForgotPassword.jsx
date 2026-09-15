@@ -75,8 +75,8 @@ const ForgotPassword = () => {
       </div>
 
       {/* Right Side: Form Component */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 sm:p-8 bg-white">
+        <div className="w-full max-w-md py-6 sm:py-10">
           
           {/* Mobile Logo (Visible only on small screens) */}
           <div className="flex lg:hidden items-center gap-3 mb-10 justify-center">

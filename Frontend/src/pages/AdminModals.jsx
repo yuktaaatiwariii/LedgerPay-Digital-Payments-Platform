@@ -13,9 +13,9 @@ export function UsersModal({ open, onClose, users }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
-      <div className="bg-white rounded-3xl w-[900px] max-h-[80vh] overflow-y-auto p-8">
+      <div className="bg-white rounded-3xl w-[calc(100%-2rem)] max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center p-6 sm:p-8 shrink-0">
           <h2 className="text-3xl font-bold">All Users</h2>
 
           <button onClick={onClose}>
@@ -23,8 +23,9 @@ export function UsersModal({ open, onClose, users }) {
           </button>
         </div>
 
-
-        <table className="w-full">
+        <div className="overflow-y-auto flex-1 p-6 sm:p-8 pt-0">
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full whitespace-nowrap">
 
           <thead className="bg-cyan-100">
 
@@ -63,12 +64,11 @@ export function UsersModal({ open, onClose, users }) {
 
             ))}
 
-          </tbody>
-
-        </table>
-    
-
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
     </div>
   );
 }
@@ -89,11 +89,11 @@ export function AccountsModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
 
-      <div className="bg-white rounded-3xl w-[950px] max-h-[80vh] overflow-y-auto p-8">
+      <div className="bg-white rounded-3xl w-[calc(100%-2rem)] max-w-5xl max-h-[80vh] overflow-hidden flex flex-col">
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center p-6 sm:p-8 shrink-0">
 
-          <h2 className="text-3xl font-bold">
+          <h2 className="text-2xl sm:text-3xl font-bold">
             All Accounts
           </h2>
 
@@ -102,8 +102,9 @@ export function AccountsModal({
           </button>
 
         </div>
-
-        <table className="w-full">
+        <div className="overflow-y-auto flex-1 p-6 sm:p-8 pt-0">
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full whitespace-nowrap">
 
           <thead className="bg-cyan-100">
 
@@ -166,12 +167,11 @@ export function AccountsModal({
 
             ))}
 
-          </tbody>
-
-        </table>
-
+            </tbody>
+          </table>
+        </div>
       </div>
-
+    </div>
     </div>
   );
 }
@@ -231,7 +231,7 @@ export function FundsModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
 
-      <div className="bg-white rounded-3xl w-[650px] p-8">
+      <div className="bg-white rounded-3xl w-[calc(100%-2rem)] max-w-2xl max-h-[80vh] overflow-y-auto p-6 sm:p-8">
 
         <div className="flex justify-between items-center mb-8">
 
@@ -353,19 +353,19 @@ export function FundsModal({
 
           </div>
 
-          <div className="flex justify-end gap-4 pt-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-4 pt-4">
 
             <button
               type="button"
               onClick={onClose}
-              className="border border-cyan-600 px-6 py-2 rounded-xl text-cyan-700"
+              className="border border-cyan-600 px-6 py-3 sm:py-2 rounded-xl text-cyan-700 w-full sm:w-auto"
             >
               Cancel
             </button>
 
             <button
               disabled={mutation.isPending}
-              className="bg-cyan-600 text-white px-8 py-2 rounded-xl hover:bg-cyan-700"
+              className="bg-cyan-600 text-white px-8 py-3 sm:py-2 rounded-xl hover:bg-cyan-700 w-full sm:w-auto"
             >
               {mutation.isPending
                 ? "Processing..."
@@ -422,8 +422,8 @@ export function UserSearchModal({ open, onClose, user, accounts }) {
   const userAccounts = accounts?.filter(acc => acc.user?._id === user._id) || [];
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 p-4">
-      <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+      <div className="bg-white rounded-3xl w-[calc(100%-2rem)] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         
         {/* Header */}
         <div className="p-8 border-b border-slate-100 flex justify-between items-start bg-slate-50 shrink-0">
