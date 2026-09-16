@@ -17,11 +17,15 @@ app.use(cors({
 const authRouter = require ('./routes/auth.routes');
 const accountRouter = require('./routes/account.routes');
 const transactionRoutes = require('./routes/transaction.routes');
+const kycRoutes = require('./routes/kyc.routes');
+const adminKycRoutes = require('./routes/admin.kyc.routes');
 
 
 app.use('/api/accounts', accountRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/kyc', kycRoutes);
+app.use('/api/admin/kyc', adminKycRoutes);
 
 module.exports = app;
 

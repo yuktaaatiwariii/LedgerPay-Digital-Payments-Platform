@@ -19,6 +19,7 @@ const menu = [
   { icon: Wallet, name: "My Accounts" , route:"/home/accounts" },
   { icon: ArrowRightLeft, name: "Transactions", route:"/home/transaction" },
   { icon: CreditCard, name: "Payment History" , route:"/home/accounts" },
+  { icon: ShieldCheck, name: "KYC Status", route:"/home/kyc" },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {

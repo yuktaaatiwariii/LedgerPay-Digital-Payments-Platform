@@ -1,0 +1,77 @@
+services:
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    networks:
+      - ledgerpay-network
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Backend/.env # Provide default development configuration
+    environment:
+      # Override host specific environments for compose
+      - REDIS_URL=redis://redis:6379
+      - CLIENT_URL=http://localhost:5173
+    volumes:
+      - ./Backend:/app
+      - /app/node_modules
+    networks:
+      - ledgerpay-network
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      # Expose only if necessary for local DB inspection
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - ledgerpay-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    ports:
+      # Expose only if necessary
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ledgerpay-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongodb_data:
+  redis_data:
+
+networks:
+  ledgerpay-network:
+    driver: bridge

@@ -16,6 +16,7 @@ import CreateAccount from './pages/CreateAccount.jsx';
 import AdminDashboard from './components/AdminDashboard.jsx';
 import ForgotPassword from './components/ForgotPassword.jsx';
 import ResetPassword from './components/ResetPassword.jsx';
+import KYC from './pages/KYC.jsx';
 
 const App = () => {
 
@@ -54,6 +55,7 @@ if (isLoading) {
                 <Route path="accounts" element={<MyAccounts />} />
                <Route path="transaction" element={< Transaction/>} />
                 <Route path="create" element={< CreateAccount/>} />
+               <Route path="kyc" element={<KYC/>} />
                </Route>
          <Route path="/AdminDashboard" element={authUser ? ( authUser.role === "ADMIN" ? (
         <AdminDashboard /> ) : (  <Navigate to="/home/dashboard" /> )) : ( <Navigate to="/login" />  )} />      

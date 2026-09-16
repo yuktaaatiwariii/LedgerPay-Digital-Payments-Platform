@@ -8,7 +8,8 @@ import { axiosInstance } from "../lib/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { UsersModal, AccountsModal, FundsModal, UserSearchModal } from "../pages/AdminModals.jsx";
+import { UsersModal, AccountsModal, FundsModal, UserSearchModal, KYCApplicationsModal, KYCReviewModal } from "../pages/AdminModals.jsx";
+import { getKYCApplications, approveKYC, rejectKYC } from "../lib/kycApi";
 
 export default function AdminDashboard() {
   const queryClient = useQueryClient();
@@ -19,6 +20,8 @@ export default function AdminDashboard() {
   const [showAccounts, setShowAccounts] = useState(false);
   const [showFunds, setShowFunds] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showKYCApplications, setShowKYCApplications] = useState(false);
+  const [selectedKYCApplication, setSelectedKYCApplication] = useState(null);
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -56,6 +59,11 @@ export default function AdminDashboard() {
     },
   });
 
+  const { data: kycData, refetch: refetchKYC } = useQuery({
+    queryKey: ["kycApplications"],
+    queryFn: async () => await getKYCApplications("ALL"),
+  });
+
   const users = usersData?.users || [];
   const accounts = accountsData?.accounts || [];
   const totalUsers = users.length;
@@ -87,6 +95,30 @@ export default function AdminDashboard() {
     },
   });
 
+  const approveKycMutation = useMutation({
+    mutationFn: approveKYC,
+    onSuccess: () => {
+      toast.success("KYC Approved");
+      queryClient.invalidateQueries({ queryKey: ["kycApplications"] });
+      setSelectedKYCApplication(null);
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to approve KYC");
+    }
+  });
+
+  const rejectKycMutation = useMutation({
+    mutationFn: ({id, reason}) => rejectKYC(id, reason),
+    onSuccess: () => {
+      toast.success("KYC Rejected");
+      queryClient.invalidateQueries({ queryKey: ["kycApplications"] });
+      setSelectedKYCApplication(null);
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Failed to reject KYC");
+    }
+  });
+
   const logoutMutation = useMutation({
     mutationFn: async () => {
       const res = await axiosInstance.post("/auth/logout");
@@ -106,6 +138,7 @@ export default function AdminDashboard() {
     { name: "Dashboard", icon: LayoutDashboard, active: true },
     { name: "Users", icon: Users, onClick: () => setShowUsers(true) },
     { name: "Accounts", icon: Wallet, onClick: () => setShowAccounts(true) },
+    { name: "KYC Verification", icon: ShieldCheck, onClick: () => setShowKYCApplications(true) },
     { name: "User Dashboard", icon: LayoutDashboard, onClick: () => navigate("/home/dashboard") },
   ];
 
@@ -308,6 +341,7 @@ export default function AdminDashboard() {
                  { title: "Initial Funds", desc: "Deposit opening balance into newly created accounts.", icon: ArrowLeftRight, color: "text-cyan-600", bg: "bg-cyan-50", onClick: () => setShowFunds(true) },
                  { title: "Users", desc: "View all registered users and customer information.", icon: Users, color: "text-emerald-600", bg: "bg-emerald-50", onClick: () => setShowUsers(true) },
                  { title: "Accounts", desc: "View every account in the banking system.", icon: Activity, color: "text-indigo-600", bg: "bg-indigo-50", onClick: () => setShowAccounts(true) },
+                 { title: "KYC Review", desc: "Review and approve pending KYC applications.", icon: ShieldCheck, color: "text-amber-600", bg: "bg-amber-50", onClick: () => setShowKYCApplications(true) },
                ].map((action, idx) => (
                  <div key={idx} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center hover:-translate-y-1 hover:shadow-md transition-all">
                     <div className={`w-14 h-14 rounded-2xl ${action.bg} ${action.color} flex items-center justify-center mb-5`}>
@@ -404,6 +438,21 @@ export default function AdminDashboard() {
         onClose={() => setSelectedSearchUser(null)} 
         user={selectedSearchUser} 
         accounts={accounts} 
+      />
+      <KYCApplicationsModal 
+        open={showKYCApplications} 
+        onClose={() => setShowKYCApplications(false)} 
+        applications={kycData?.data || []} 
+        onReview={(app) => setSelectedKYCApplication(app)} 
+      />
+      <KYCReviewModal 
+        open={!!selectedKYCApplication} 
+        onClose={() => setSelectedKYCApplication(null)} 
+        application={selectedKYCApplication} 
+        onApprove={(id) => approveKycMutation.mutate(id)} 
+        onReject={(id, reason) => rejectKycMutation.mutate({id, reason})}
+        isApproving={approveKycMutation.isPending}
+        isRejecting={rejectKycMutation.isPending}
       />
     </div>
   );
