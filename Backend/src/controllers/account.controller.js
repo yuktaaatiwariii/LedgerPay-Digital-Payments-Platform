@@ -18,12 +18,17 @@ async function createAccountController(req, res) {
 }
 
 async function getAllAccountsController(req, res) {
-   
    const accounts = await accountModel.find({ user: req.user._id });
+   
+   const accountsWithBalance = await Promise.all(accounts.map(async (account) => {
+       const stats = await account.getStats();
+       return { ...account.toObject(), ...stats };
+   }));
+
    res.status(200).json({
-       accounts
+       accounts: accountsWithBalance
    })
-} 
+}
 
  
 async function getAccountBalanceController(req, res) {

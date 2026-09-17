@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
-import { useState } from "react";
+import { X, ExternalLink, FileText, AlertCircle } from "lucide-react";
+import { useState, useEffect } from "react";
 import { axiosInstance } from "../lib/axios";
 
 
@@ -182,7 +182,7 @@ export function AccountsModal({
 // Initial Funds Modal
 // =============================
 
-import { useEffect } from "react";
+
 import { RefreshCw, IndianRupee } from "lucide-react";
 
 export function FundsModal({
@@ -624,12 +624,56 @@ export function KYCReviewModal({
           </div>
           
           <div>
-            <p className="text-sm text-slate-500 font-medium mb-2">Document View</p>
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-sm text-slate-500 font-medium">Document View</p>
+              {application?.documentUrl && (
+                <a
+                  href={application.documentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-semibold text-cyan-600 hover:text-cyan-700 flex items-center gap-1 transition hover:underline"
+                >
+                  <ExternalLink size={14} /> Open in New Tab
+                </a>
+              )}
+            </div>
             <div className="border rounded-xl overflow-hidden bg-slate-50 flex justify-center items-center min-h-[200px]">
-              {application.documentResourceType === 'pdf' ? (
-                <iframe src={application.documentUrl} className="w-full h-[400px]" title="Document" />
+              {(application.documentResourceType === 'pdf' || application.documentResourceType?.includes('pdf') || (typeof application.documentUrl === 'string' && application.documentUrl.toLowerCase().includes('.pdf'))) ? (
+                <div className="w-full flex flex-col items-center">
+                  <img
+                    src={application.documentUrl.toLowerCase().endsWith('.pdf') ? application.documentUrl.slice(0, -4) + '.jpg' : application.documentUrl + '.jpg'}
+                    alt="KYC PDF Preview"
+                    className="max-w-full max-h-[400px] object-contain rounded-lg shadow-sm mt-2"
+                  />
+                  <div className="p-3 bg-slate-100 w-full text-center">
+                    <a
+                      href={application.documentUrl.toLowerCase().endsWith('.pdf') ? application.documentUrl.slice(0, -4) + '.jpg' : application.documentUrl + '.jpg'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-cyan-700 hover:underline"
+                    >
+                      <ExternalLink size={16} /> Open Document in New Tab
+                    </a>
+                  </div>
+                </div>
               ) : (
-                <img src={application.documentUrl} alt="KYC Document" className="max-w-full max-h-[400px] object-contain" />
+                <div className="w-full flex flex-col items-center justify-center p-2">
+                  <img
+                    src={application.documentUrl}
+                    alt="KYC Document"
+                    className="max-w-full max-h-[400px] object-contain rounded-lg shadow-sm"
+                  />
+                  <div className="mt-3 text-center">
+                    <a
+                      href={application.documentUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 hover:text-cyan-600 hover:underline"
+                    >
+                      <ExternalLink size={13} /> View original image
+                    </a>
+                  </div>
+                </div>
               )}
             </div>
           </div>

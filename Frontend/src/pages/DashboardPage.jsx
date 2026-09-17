@@ -37,6 +37,18 @@ export default function DashboardPage() {
   const primaryAccount = accounts.length > 0 ? accounts[0] : null;
   const totalAccounts = accounts.length;
 
+  // Fetch primary account balance directly
+  const { data: primaryBalanceData } = useQuery({
+    queryKey: ["primaryBalance", primaryAccount?._id],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/accounts/balance/${primaryAccount._id}`);
+      return res.data;
+    },
+    enabled: !!primaryAccount?._id,
+  });
+
+  const primaryBalance = primaryBalanceData?.balance ?? 0;
+
   // Fetch Summary
   const { data: summaryData } = useQuery({
     queryKey: ["summary"],
@@ -153,7 +165,6 @@ export default function DashboardPage() {
 
             <div className="bg-[#0A192F] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
                <div className="absolute right-0 bottom-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl"></div>
-               
                {primaryAccount ? (
                  <div className="relative z-10">
                    <div className="flex items-center gap-4 mb-10">
@@ -170,11 +181,10 @@ export default function DashboardPage() {
                        </div>
                      </div>
                    </div>
-
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                      <div>
                        <p className="text-sm text-slate-400 font-medium mb-1">Available Balance</p>
-                       <p className="text-3xl font-bold">₹ {primaryAccount.balance?.toLocaleString() || "0.00"}</p>
+                       <p className="text-3xl font-bold">₹ {primaryBalance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                      </div>
                      <div>
                        <p className="text-sm text-slate-400 font-medium mb-1">Total Credit</p>

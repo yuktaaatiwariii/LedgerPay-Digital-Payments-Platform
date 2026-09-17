@@ -54,7 +54,7 @@ export default function KYC() {
     }
   });
 
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
 
   const processFile = (file) => {
     if (!file) return;
@@ -63,15 +63,11 @@ export default function KYC() {
       return;
     }
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Only JPG, PNG, and PDF files are allowed');
+      toast.error('Only JPG and PNG images are allowed');
       return;
     }
     setDocFile(file);
-    if (file.type.startsWith('image/')) {
-      setPreview(URL.createObjectURL(file));
-    } else {
-      setPreview(null);
-    }
+    setPreview(URL.createObjectURL(file));
   };
 
   const handleFileChange = (e) => {
@@ -357,11 +353,11 @@ export default function KYC() {
                               className="relative cursor-pointer rounded-md font-bold text-cyan-600 hover:text-cyan-500 focus-within:outline-none"
                             >
                               <span>Click to upload</span>
-                              <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".jpg,.jpeg,.png,.pdf" />
+                              <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept=".jpg,.jpeg,.png" />
                             </label>
                             <span>or drag and drop</span>
                           </div>
-                          <p className="text-sm leading-5 text-slate-400 mt-2 font-medium">PDF, PNG, JPG up to 5MB</p>
+                          <p className="text-sm leading-5 text-slate-400 mt-2 font-medium">PNG, JPG up to 5MB</p>
                         </>
                       )}
                     </div>

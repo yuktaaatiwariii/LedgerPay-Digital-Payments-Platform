@@ -74,6 +74,35 @@ accountSchema.methods.getBalance = async function() {
     return balanceData[0].balance;
 };
 
+accountSchema.methods.getStats = async function() {
+    const ledgerModel = require('./ledger.model');
+    const statsData = await ledgerModel.aggregate([
+        { $match: { account: this._id } },
+        { $group: { 
+            _id: null,
+            totalDebit : { $sum:{ 
+                $cond:[
+                   { $eq: ["$type", "DEBIT"] },
+                   "$amount",
+                   0
+                ]} }  ,
+            totalCredit : { $sum:{ 
+                $cond:[
+                   { $eq: ["$type", "CREDIT"] },
+                   "$amount",
+                   0
+                ]} } 
+        } },
+        { $project: { _id: 0, balance: { $subtract: ["$totalCredit", "$totalDebit"] }, totalCredit: 1, totalDebit: 1 } } 
+    ]);
+
+    if (statsData.length === 0) {
+        return { balance: 0, totalCredit: 0, totalDebit: 0 };
+    }
+    
+    return statsData[0];
+};
+
 const accountModel = mongoose.model('account',accountSchema);
 
 

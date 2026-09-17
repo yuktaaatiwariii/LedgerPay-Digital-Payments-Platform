@@ -94,15 +94,7 @@ const LoginPage = () => {
       {/* Right Side: Form Component */}
       <div className="w-full lg:w-[55%] flex items-center justify-center p-4 sm:p-8 bg-slate-50 relative">
         
-        {/* Theme Toggle */}
-        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 flex items-center bg-slate-200/80 rounded-full p-1 border border-slate-300/50">
-           <button onClick={() => setIsDarkMode(false)} className={`p-1.5 rounded-full transition ${!isDarkMode ? 'bg-white shadow-sm text-slate-800' : 'text-slate-500 hover:text-slate-700'}`}>
-              <Sun size={18} />
-           </button>
-           <button onClick={() => setIsDarkMode(true)} className={`p-1.5 rounded-full transition ${isDarkMode ? 'bg-[#0F172A] text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-              <Moon size={18} />
-           </button>
-        </div>
+     
 
         <div className="w-full max-w-[420px] bg-white p-6 sm:p-10 rounded-3xl shadow-2xl shadow-slate-200/60 border border-slate-100">
           

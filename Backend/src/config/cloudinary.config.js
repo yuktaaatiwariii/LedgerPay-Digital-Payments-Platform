@@ -19,8 +19,8 @@ const storage = new CloudinaryStorage({
     return {
       folder: `ledgerpay/kyc/user_${userId}`,
       public_id: `${docType}_${Date.now()}`,
-      allowed_formats: ['jpg', 'png', 'jpeg', 'pdf'],
-      resource_type: 'auto'
+      allowed_formats: ['jpg', 'png', 'jpeg'],
+      resource_type: 'image'
     };
   },
 });
@@ -31,11 +31,11 @@ const upload = multer({
     fileSize: 5 * 1024 * 1024, // 5 MB
   },
   fileFilter: (req, file, cb) => {
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg'];
     if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Unsupported file type'), false);
+      cb(new Error('Unsupported file type. Only images (JPG, PNG) are allowed.'), false);
     }
   }
 });

@@ -26,6 +26,8 @@ const submitKYC = async (req, res) => {
             return res.status(400).json({ message: 'Document file is required.' });
         }
 
+
+
         const newKyc = new KYC({
             userId,
             fullName,
@@ -33,7 +35,8 @@ const submitKYC = async (req, res) => {
             address,
             documentType,
             documentUrl: req.file.path, // multer-storage-cloudinary populates path with secure_url
-            cloudinaryPublicId: req.file.filename // multer-storage-cloudinary populates filename with public_id
+            cloudinaryPublicId: req.file.filename, // multer-storage-cloudinary populates filename with public_id
+            documentResourceType: 'image'
         });
 
         await newKyc.save();
@@ -100,6 +103,7 @@ const resubmitKYC = async (req, res) => {
             oldCloudinaryId = existingKyc.cloudinaryPublicId;
             existingKyc.documentUrl = req.file.path;
             existingKyc.cloudinaryPublicId = req.file.filename;
+            existingKyc.documentResourceType = 'image';
         }
 
         existingKyc.status = 'PENDING';
