@@ -492,3 +492,202 @@ export function UserSearchModal({ open, onClose, user, accounts }) {
     </div>
   );
 }
+
+// =============================
+// KYC Applications Modal
+// =============================
+
+export function KYCApplicationsModal({ open, onClose, applications, onReview }) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+      <div className="bg-white rounded-3xl w-[calc(100%-2rem)] max-w-5xl max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="flex justify-between items-center p-6 sm:p-8 shrink-0">
+          <h2 className="text-2xl sm:text-3xl font-bold">KYC Applications</h2>
+          <button onClick={onClose}>
+            <X />
+          </button>
+        </div>
+        <div className="overflow-y-auto flex-1 p-6 sm:p-8 pt-0">
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full whitespace-nowrap">
+              <thead className="bg-cyan-100">
+                <tr>
+                  <th className="p-3 text-left">User</th>
+                  <th className="p-3 text-left">Document Type</th>
+                  <th className="p-3 text-left">Status</th>
+                  <th className="p-3 text-left">Submitted At</th>
+                  <th className="p-3 text-left">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {applications?.map((app) => (
+                  <tr key={app._id} className="border-b hover:bg-gray-50">
+                    <td className="p-3">
+                      <div className="font-semibold">{app.fullName}</div>
+                      <div className="text-sm text-slate-500">{app.userId?.email || 'N/A'}</div>
+                    </td>
+                    <td className="p-3">{app.documentType}</td>
+                    <td className="p-3">
+                      <span className={`px-2 py-1 rounded text-xs font-bold ${
+                        app.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' :
+                        app.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                        'bg-amber-100 text-amber-700'
+                      }`}>
+                        {app.status}
+                      </span>
+                    </td>
+                    <td className="p-3">{new Date(app.submittedAt).toLocaleDateString()}</td>
+                    <td className="p-3">
+                      <button
+                        onClick={() => onReview(app)}
+                        className="bg-cyan-600 text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-cyan-700 transition"
+                      >
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {(!applications || applications.length === 0) && (
+                  <tr>
+                    <td colSpan="5" className="p-6 text-center text-slate-500">
+                      No KYC applications found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =============================
+// KYC Review Modal
+// =============================
+
+export function KYCReviewModal({
+  open,
+  onClose,
+  application,
+  onApprove,
+  onReject,
+  isApproving,
+  isRejecting
+}) {
+  const [rejectReason, setRejectReason] = useState("");
+  const [showRejectInput, setShowRejectInput] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setRejectReason("");
+      setShowRejectInput(false);
+    }
+  }, [open]);
+
+  if (!open || !application) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+      <div className="bg-white rounded-3xl w-[calc(100%-2rem)] max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="flex justify-between items-center p-6 sm:p-8 shrink-0 border-b">
+          <h2 className="text-2xl font-bold">Review KYC Application</h2>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="overflow-y-auto flex-1 p-6 sm:p-8 space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Full Name</p>
+              <p className="font-semibold text-lg">{application.fullName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Date of Birth</p>
+              <p className="font-semibold text-lg">{new Date(application.dateOfBirth).toLocaleDateString()}</p>
+            </div>
+            <div className="col-span-2">
+              <p className="text-sm text-slate-500 font-medium">Address</p>
+              <p className="font-semibold">{application.address}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Document Type</p>
+              <p className="font-semibold">{application.documentType}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500 font-medium">Status</p>
+              <p className="font-semibold">{application.status}</p>
+            </div>
+          </div>
+          
+          <div>
+            <p className="text-sm text-slate-500 font-medium mb-2">Document View</p>
+            <div className="border rounded-xl overflow-hidden bg-slate-50 flex justify-center items-center min-h-[200px]">
+              {application.documentResourceType === 'pdf' ? (
+                <iframe src={application.documentUrl} className="w-full h-[400px]" title="Document" />
+              ) : (
+                <img src={application.documentUrl} alt="KYC Document" className="max-w-full max-h-[400px] object-contain" />
+              )}
+            </div>
+          </div>
+
+          {showRejectInput && (
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-slate-700 mb-1">Rejection Reason</label>
+              <textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                className="w-full border rounded-xl p-3 focus:ring-2 focus:ring-red-500 outline-none"
+                rows="3"
+                placeholder="Enter reason for rejection..."
+              />
+            </div>
+          )}
+        </div>
+        
+        <div className="p-6 sm:p-8 shrink-0 border-t bg-slate-50 flex flex-col sm:flex-row justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 border rounded-xl text-slate-600 hover:bg-slate-100 font-medium"
+          >
+            Cancel
+          </button>
+          
+          {application.status === 'PENDING' && (
+            <>
+              {showRejectInput ? (
+                <button
+                  onClick={() => onReject(application._id, rejectReason)}
+                  disabled={isRejecting || !rejectReason.trim()}
+                  className="px-6 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 font-medium disabled:opacity-50"
+                >
+                  {isRejecting ? "Rejecting..." : "Confirm Rejection"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowRejectInput(true)}
+                  className="px-6 py-2 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 font-medium"
+                >
+                  Reject
+                </button>
+              )}
+              
+              {!showRejectInput && (
+                <button
+                  onClick={() => onApprove(application._id)}
+                  disabled={isApproving}
+                  className="px-6 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-medium disabled:opacity-50"
+                >
+                  {isApproving ? "Approving..." : "Approve"}
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
