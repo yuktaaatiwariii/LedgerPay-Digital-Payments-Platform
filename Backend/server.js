@@ -18,7 +18,7 @@ const startServer = async () => {
         const app = require('./src/app');
 
         // Start Express only after Redis is ready
-        app.listen(PORT, () => {
+        app.listen(PORT, "0.0.0.0", () => {
             console.log(`Server is running on port ${PORT}`);
         });
 
